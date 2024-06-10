@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { useConverstion } from '../useConversation';
 
 const SideNav = () => {
 	const location = useLocation();
+	const params = useParams();
 	const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+
+	const { isActive } = useConverstion();
 
 	// navigation links
 	const links = [
@@ -16,7 +20,7 @@ const SideNav = () => {
 			miconHover: '/mhomeD.png',
 		},
 		{
-			to: '/doctor',
+			to: '/find-doctor',
 			label: 'Doctor',
 			iconDefault: '/doctorL.png',
 			iconHover: '/doctorD.png',
@@ -24,7 +28,7 @@ const SideNav = () => {
 			miconHover: '/mdoctorD.png',
 		},
 		{
-			to: '/chat',
+			to: '/chats',
 			label: 'Chat',
 			iconDefault: '/chatL.png',
 			iconHover: '/chatD.png',
@@ -62,11 +66,12 @@ const SideNav = () => {
 	];
 
 	return (
-		<div className=' font-inter py-5 px-4 xl:px-10 bg-white fixed bottom-0 lg:top-0 lg:h-screen w-full lg:w-[18%] xll:w-[15%] shadow-top-only lg:shadow-right-only '>
+		<div
+			className={`${
+				isActive ? 'hidden md:block' : 'block'
+			} font-inter py-5 px-4 xl:px-10 bg-white fixed z-50 bottom-0 lg:top-0 lg:h-screen w-full lg:w-[18%] xll:w-[15%] shadow-top-only lg:shadow-right-only`}>
 			<div>
-				{/* desktop */}
 				<div className='hidden lg:block'>
-					{/* logo */}
 					<div className='w-[10rem]'>
 						<img
 							className='w-full h-full object-cover'
@@ -74,8 +79,6 @@ const SideNav = () => {
 							alt=''
 						/>
 					</div>
-
-					{/* links */}
 					<div className='px-4 mt-14'>
 						<ul className='flex flex-col gap-10 text-sm llg:text-base'>
 							{links.map((link) => (
@@ -83,18 +86,20 @@ const SideNav = () => {
 									<Link
 										to={link.to}
 										className={`flex gap-4 items-center font-bold transition duration-300 ease-in ${
-											location.pathname === link.to || hoveredLink === link.to
+											location.pathname === link.to ||
+											(link.to === '/chats' && params.id) ||
+											hoveredLink === link.to
 												? 'text-greens'
 												: 'text-textgray'
 										}`}
 										onMouseEnter={() => setHoveredLink(link.to)}
 										onMouseLeave={() => setHoveredLink(null)}>
-										{/* icon */}
 										<div className=''>
 											<img
 												className=''
 												src={
 													location.pathname === link.to ||
+													(link.to === '/chats' && params.id) ||
 													hoveredLink === link.to
 														? link.iconHover
 														: link.iconDefault
@@ -102,7 +107,6 @@ const SideNav = () => {
 												alt=''
 											/>
 										</div>
-										{/* text */}
 										{link.label}
 									</Link>
 								</li>
@@ -111,8 +115,8 @@ const SideNav = () => {
 					</div>
 				</div>
 
-				{/* mobile */}
-				<div className=' lg:hidden'>
+				{/* mobile nav */}
+				<div className={` lg:hidden`}>
 					<div className=''>
 						<ul className='w-full flex gap-10 items-center justify-between text-base'>
 							{links
@@ -122,18 +126,20 @@ const SideNav = () => {
 										<Link
 											to={link.to}
 											className={`flex flex-col items-center font-bold transition duration-300 ease-in ${
-												location.pathname === link.to || hoveredLink === link.to
+												location.pathname === link.to ||
+												(link.to === '/chats' && params.id) ||
+												hoveredLink === link.to
 													? 'text-greens'
 													: 'text-textgray'
 											}`}
 											onMouseEnter={() => setHoveredLink(link.to)}
 											onMouseLeave={() => setHoveredLink(null)}>
-											{/* icon */}
 											<div className=''>
 												<img
 													className=''
 													src={
 														location.pathname === link.to ||
+														(link.to === '/chats' && params.id) ||
 														hoveredLink === link.to
 															? link.miconHover
 															: link.miconDefault
@@ -141,10 +147,9 @@ const SideNav = () => {
 													alt=''
 												/>
 											</div>
-											{/* text - only show when active */}
 											<div className='hidden xs:block'>
 												<span
-													className={` transition-opacity duration-300 ease-in-out ${
+													className={`transition-opacity duration-300 ease-in-out ${
 														location.pathname === link.to ? 'block' : 'hidden'
 													}`}>
 													{link.label}

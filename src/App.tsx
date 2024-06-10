@@ -1,5 +1,14 @@
 import { Route, Routes } from 'react-router-dom';
-import { Dashboard, Dlogin, Dsignup, Plogin, Psignup } from './components';
+import {
+	Chats,
+	Dashboard,
+	Dlogin,
+	Dsignup,
+	FindDoctors,
+	Plogin,
+	Psignup,
+	SingleChats,
+} from './components';
 
 function App() {
 	return (
@@ -17,6 +26,14 @@ function App() {
 				<Route path='/doctors/signup' element={<Dsignup />} />
 				{/* dashboard poage */}
 				<Route path='/' element={<Dashboard />} />
+
+				{/* find doctors page */}
+				<Route path='/find-doctor' element={<FindDoctors />} />
+
+				{/* chat */}
+				<Route path='/chats' element={<Chats />} />
+				{/* singlechats */}
+				<Route path='/chats/:id' element={<SingleChats />} />
 			</Routes>
 		</main>
 	);

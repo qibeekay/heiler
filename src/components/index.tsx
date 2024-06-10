@@ -12,6 +12,21 @@ import SideNav from './externalComponents/SideNav';
 import Mainnav from './dashboardCom/Mainnav';
 import Header from './externalComponents/Header';
 import DashDetails from './dashboardCom/DashDetails';
+import FindDoctors from '../pages/find-doctors/FindDoctors';
+import FindDoctorsPage from './findDoctoCom/FindDoctorsPage';
+import FdMainnav from './findDoctoCom/FdMainnav';
+import FdDoctorsCategory from './findDoctoCom/FdDoctorsCategory';
+import Chats from '../pages/chat/Chats';
+import ChatsPage from './ChatsCom/ChatsPage';
+import ChatsMainnav from './ChatsCom/ChatsMainnav';
+import ChatsDetails from './ChatsCom/ChatsDetails';
+import SingleChatPage from './ChatsCom/singleChat/SingleChatPage';
+import SingleChats from '../pages/chat/SingleChats';
+import UsersList from './ChatsCom/UsersList';
+import SingleChatsDetails from './ChatsCom/singleChat/SingleChatsDetails';
+import SingleChatMainnav from './ChatsCom/singleChat/SingleChatMainnav';
+import ChattingPage from './ChatsCom/singleChat/ChattingPage';
+import ChattingDisplay from './ChatsCom/ChattingDisplay';
 
 export {
 	Plogin,
@@ -28,4 +43,19 @@ export {
 	Mainnav,
 	Header,
 	DashDetails,
+	FindDoctors,
+	FindDoctorsPage,
+	FdMainnav,
+	FdDoctorsCategory,
+	Chats,
+	ChatsPage,
+	ChatsDetails,
+	ChatsMainnav,
+	SingleChatPage,
+	SingleChats,
+	UsersList,
+	SingleChatMainnav,
+	SingleChatsDetails,
+	ChattingPage,
+	ChattingDisplay,
 };

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const DashDetails = () => {
 	return (
-		<div className='w-full text-dark font-inter pt-8 pb-[8rem] md:pb-20 py-4 px-4 sm:px-8 xl:px-[5rem]'>
+		<div className='w-full text-dark font-inter pt-[9.5rem] pb-[8rem] md:pb-20 py-4 px-4 sm:px-8 xl:px-[5rem]'>
 			<div className='flex flex-col llg:flex-row gap-6 xl:gap-10'>
 				{/* side 1 */}
 				<div className='w-full'>
