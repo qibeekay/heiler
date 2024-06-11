@@ -169,7 +169,7 @@ const UsersList = () => {
 			</div>
 
 			{/* users/chat details */}
-			<div className=' mt-10 h-[calc(100vh-10rem)] overflow-y-scroll pb-10'>
+			<div className=' mt-10 h-screen overflow-y-scroll pb-[18rem]'>
 				<div className='flex flex-col gap-4'>
 					{doctors?.map((doctor, index) => (
 						<button
