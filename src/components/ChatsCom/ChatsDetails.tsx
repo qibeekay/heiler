@@ -2,8 +2,8 @@ import { ChattingDisplay, UsersList } from '../../components';
 
 const ChatsDetails = () => {
 	return (
-		<div className='font-inter text-dark w-full overflow-hidden'>
-			<div className='w-full flex h-[calc(100svh-5rem)] lg:h-[calc(100svh-7rem)] mt-[6rem] lg:mt-[7rem]'>
+		<div className='font-inter text-dark w-full relative '>
+			<div className='w-full fixed bottom-0 right-0 lg:w-[82%] xll:w-[85%] flex h-screen pt-[7rem]'>
 				{/* users */}
 				<UsersList />
 

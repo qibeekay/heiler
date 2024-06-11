@@ -1,4 +1,3 @@
-import { Chip } from '@material-tailwind/react';
 import { RiSearch2Line } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import { useConverstion } from '../useConversation';
@@ -138,8 +137,8 @@ const UsersList = () => {
 	return (
 		<div
 			className={`${
-				isActive ? 'hidden md:block' : 'block'
-			} w-full md:w-[70%] shadow-right-only bg-white p-4 llg:p-10 relative`}>
+				isActive ? 'hidden lg:block' : 'block'
+			} w-full lg:w-[70%] shadow-right-only bg-white p-4 llg:p-7 relative`}>
 			{/* search and add users */}
 			<div className='w-full relative bg-white'>
 				<div className='flex items-center justify-between gap-10'>
@@ -169,12 +168,12 @@ const UsersList = () => {
 			</div>
 
 			{/* users/chat details */}
-			<div className=' mt-10 h-screen overflow-y-scroll pb-[18rem]'>
-				<div className='flex flex-col gap-4'>
+			<div className=' mt-10 overflow-y-scroll h-[76%] lg:h-[88%]'>
+				<div className='flex flex-col gap-5 sm:gap-4'>
 					{doctors?.map((doctor, index) => (
 						<button
 							key={index}
-							className='flex items-center gap-4 hover:bg-blue-gray-100 md:p-2'
+							className='flex items-center gap-4 hover:bg-blue-gray-100 p-1 sm:p-2'
 							onClick={() => {
 								singleMessege(index);
 							}}>
@@ -193,28 +192,27 @@ const UsersList = () => {
 								{/* name/field */}
 								<div className='flex w-full justify-between'>
 									<div
-										className='flex gap-2 md:w-[18rem] overflow-hidden whitespace-nowrap
+										className='flex items-center gap-2 md:w-[18rem] overflow-hidden whitespace-nowrap
                                             '>
 										<p className='text-sm sm:text-base md:text-lg font-semibold'>
 											{doctor?.name}
 										</p>
-										<Chip
-											color='blue'
-											value={doctor?.field}
-											className='rounded-full capitalize font-normal text-xs'
-										/>
+
+										<p className='text-[8px] bg-yellow-200 px-1 rounded-2xl'>
+											{doctor?.field}
+										</p>
 									</div>
 									<p className='text-[10px] sm:text-sm md:text-base text-[#707991]'>
 										18:30
 									</p>
 								</div>
 								{/* label/count */}
-								<div className='flex w-full justify-between md:mt-1'>
+								<div className='flex w-full justify-between gap-4 md:mt-1'>
 									<p className='text-xs sm:text-sm md:text-base text-[#707991]'>
 										{doctor?.label}
 									</p>
-									<div className='grid items-center justify-center bg-greens w-4 md:w-6 aspect-square rounded-full'>
-										<p className='text-white text-[10px] md:text-xs'>2</p>
+									<div className='grid items-center justify-center bg-greens w-5 lg:w-6 aspect-square rounded-full'>
+										<p className='text-white text-[10px] lg:text-xs'>2</p>
 									</div>
 								</div>
 							</div>

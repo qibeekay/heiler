@@ -68,7 +68,7 @@ const SideNav = () => {
 	return (
 		<div
 			className={`${
-				isActive ? 'hidden md:block' : 'block'
+				isActive ? 'hidden lg:block' : 'block'
 			} font-inter py-5 px-4 xl:px-10 bg-white fixed z-50 bottom-0 lg:top-0 lg:h-screen w-full lg:w-[18%] xll:w-[15%] shadow-top-only lg:shadow-right-only`}>
 			<div>
 				<div className='hidden lg:block'>
