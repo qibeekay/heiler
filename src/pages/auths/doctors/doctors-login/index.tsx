@@ -1,4 +1,4 @@
-import DloginPage from '../../../components/auths/doctors/DloginPage';
+import DloginPage from '../../../../components/auths/doctors/DloginPage';
 
 const Dlogin = () => {
 	return (

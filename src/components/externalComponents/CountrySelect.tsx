@@ -19,16 +19,35 @@ interface Country {
 		svg: string;
 	};
 }
-const CountrySelect = () => {
+
+// Define the props interface
+interface CountrySelectProps {
+	selectedCountry: string;
+	phone: string;
+	onCountryChange: (selectedCountry: string) => void;
+	onPhoneChange: (phone: string) => void;
+}
+
+const CountrySelect = ({
+	selectedCountry,
+	onCountryChange,
+	onPhoneChange,
+	phone,
+}: CountrySelectProps) => {
 	const { countries } = useCountries();
+
 	// Sort the countries array alphabetically by name
 	const sortedCountries = countries
 		.slice()
 		.sort((a: Country, b: Country) => a.name.localeCompare(b.name));
 
-	const [selectedCountries, setSelectedCountries] = useState<Country | null>(
-		sortedCountries[0]
-	);
+	const initialCountry =
+		sortedCountries.find(
+			(country: Country) => country.name === selectedCountry
+		) || sortedCountries[0];
+
+	const [selectedCountryState, setSelectedCountryState] =
+		useState<Country | null>(initialCountry);
 
 	const [query, setQuery] = useState('');
 
@@ -39,27 +58,46 @@ const CountrySelect = () => {
 					return country.name.toLowerCase().includes(query.toLowerCase());
 			  });
 
+	const handleCountryChange = (country: Country) => {
+		setSelectedCountryState(country);
+		onCountryChange(country.name);
+	};
+
+	const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (selectedCountryState) {
+			const formattedPhone = `${selectedCountryState.countryCallingCode}${event.target.value}`;
+			onPhoneChange(formattedPhone);
+		}
+	};
+
 	return (
 		<div className='w-full'>
 			<Combobox
-				value={selectedCountries}
-				onChange={setSelectedCountries}
+				value={selectedCountryState?.name || ''}
+				onChange={(value: string) => {
+					const selected = sortedCountries.find(
+						(country: { name: string }) => country.name === value
+					);
+					if (selected) {
+						handleCountryChange(selected);
+					}
+				}}
 				onClose={() => setQuery('')}>
 				<div className='relative mt-1'>
 					<div className='relative w-full text-left bg-bgGreen rounded-lg border border-[#C2C8D0] p-4 cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-teal-300 focus-visible:ring-offset-2 sm:text-sm overflow-hidden'>
 						<div className='flex items-center'>
-							{selectedCountries && (
+							{selectedCountryState && (
 								<div className='h-4 w-6 overflow-hidden'>
 									<img
-										src={selectedCountries.flags.png}
-										alt={`${selectedCountries.name} flag`}
+										src={selectedCountryState.flags.png}
+										alt={`${selectedCountryState.name} flag`}
 										className='h-full w-full object-cover'
 									/>
 								</div>
 							)}
 							<ComboboxInput
-								className=' border-none focus:ring-0 py-2 pl-3 pr-10 leading-5 bg-transparent outline-none text-[#858585] text-lg w-[70%]'
-								displayValue={(country: Country) => country.name}
+								className='border-none focus:ring-0 py-2 pl-3 pr-10 leading-5 bg-transparent outline-none text-[#858585] text-lg w-[70%]'
+								displayValue={(countryName: string) => countryName}
 								onChange={(event) => setQuery(event.target.value)}
 							/>
 						</div>
@@ -76,7 +114,7 @@ const CountrySelect = () => {
 						{filteredCountries.map((country: Country, index: number) => (
 							<ComboboxOption
 								key={index}
-								value={country}
+								value={country.name}
 								className='data-[focus]:bg-blue-100'>
 								{({ focus, selected }) => (
 									<div
@@ -105,18 +143,18 @@ const CountrySelect = () => {
 				{/* countrycode */}
 				<div className=''>
 					<div className='p-4 rounded-lg bg-bgGreen text-[#858585] placeholder:text-[#858585] border border-[#C2C8D0]/60 text-lg w-full outline-[#C2C8D0]'>
-						{selectedCountries && (
+						{selectedCountryState && (
 							<div className='flex items-center gap-2'>
 								<div className='h-4 w-6 overflow-hidden'>
 									<img
-										src={selectedCountries.flags.png}
-										alt={`${selectedCountries.name} flag`}
+										src={selectedCountryState.flags.png}
+										alt={`${selectedCountryState.name} flag`}
 										className='h-full w-full object-cover'
 									/>
 								</div>
 
 								<div>
-									<h1>{selectedCountries.countryCallingCode}</h1>
+									<h1>{selectedCountryState.countryCallingCode}</h1>
 								</div>
 							</div>
 						)}
@@ -129,6 +167,16 @@ const CountrySelect = () => {
 						className='p-4 rounded-lg bg-bgGreen text-[#858585] placeholder:text-[#858585] border border-[#C2C8D0]/60 text-lg w-full outline-[#C2C8D0]'
 						type='text'
 						placeholder='8097979797'
+						value={
+							selectedCountryState &&
+							phone.startsWith(selectedCountryState.countryCallingCode || '')
+								? phone.replace(
+										selectedCountryState.countryCallingCode as string,
+										''
+								  )
+								: phone
+						}
+						onChange={handlePhoneChange}
 					/>
 				</div>
 			</div>

@@ -1,4 +1,4 @@
-import { SingleChatPage } from '../../components';
+import { SingleChatPage } from '../../../components';
 
 const SingleChats = () => {
 	return (

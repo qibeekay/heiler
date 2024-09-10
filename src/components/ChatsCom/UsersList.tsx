@@ -1,138 +1,79 @@
 import { RiSearch2Line } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import { useConverstion } from '../useConversation';
+import { useEffect, useState } from 'react';
+import { GetUserChat } from '../../api/chat';
+import FormatTime from '../../utils/formatTime';
+import Loader from '../loader/Loader';
 
-const doctors = [
-	{
-		name: 'Chinwe Okoye',
-		field: 'Physiotherapy',
-		image: '/img1.png',
-		label: '#639AFF',
-	},
-	{
-		name: 'Ngozi Okafor',
-		field: 'Ear, Nose, Throat',
-		image: '/img1.png',
-		label: '#A584FF',
-	},
-	{
-		name: 'Emeka Nwachukwu',
-		field: 'Heart',
-		image: '/img1.png',
-		label: '#ff7856',
-	},
-	{
-		name: 'Chike Eze',
-		field: 'Pediatrics',
-		image: '/img1.png',
-		label: '#FD4444',
-	},
-	{
-		name: 'Adebayo Ogunleye',
-		field: 'Physician',
-		image: '/img1.png',
-		label: '#00c9e4',
-	},
-	{
-		name: 'Bola Oni',
-		field: 'Skin',
-		image: '/img1.png',
-		label: '#fd44b3',
-	},
-	{
-		name: 'Tunde Akinwale',
-		field: 'Dental',
-		image: '/img1.png',
-		label: '#A584FF',
-	},
-	{
-		name: 'Ifeoma Adeleke',
-		field: 'General Medicine',
-		image: '/img1.png',
-		label: '#fea725',
-	},
-	{
-		name: 'Kehinde Oladipo',
-		field: 'O & G',
-		image: '/img1.png',
-		label: '#fd4444',
-	},
-	{
-		name: 'Nkechi Okonkwo',
-		field: 'Neurology',
-		image: '/img1.png',
-		label: '#FFBD59',
-	},
-	{
-		name: 'Chukwudi Eze',
-		field: 'Physiotherapy',
-		image: '/img1.png',
-		label: '#639AFF',
-	},
-	{
-		name: 'Chizoba Ibrahim',
-		field: 'Ear, Nose, Throat',
-		image: '/img1.png',
-		label: '#A584FF',
-	},
-	{
-		name: 'Yewande Alabi',
-		field: 'Heart',
-		image: '/img1.png',
-		label: '#ff7856',
-	},
-	{
-		name: 'Chinonso Akande',
-		field: 'Pediatrics',
-		image: '/img1.png',
-		label: '#FD4444',
-	},
-	{
-		name: 'Emmanuel Adeyemi',
-		field: 'Physician',
-		image: '/img1.png',
-		label: '#00c9e4',
-	},
-	{
-		name: 'Folake Dada',
-		field: 'Skin',
-		image: '/img1.png',
-		label: '#fd44b3',
-	},
-	{
-		name: 'Chidi Okafor',
-		field: 'Dental',
-		image: '/img1.png',
-		label: '#A584FF',
-	},
-	{
-		name: 'Aminat Yusuf',
-		field: 'General Medicine',
-		image: '/img1.png',
-		label: '#fea725',
-	},
-	{
-		name: 'Taiwo Agboola',
-		field: 'O & G',
-		image: '/img1.png',
-		label: '#fd4444',
-	},
-	{
-		name: 'Yusuf Ahmed',
-		field: 'Neurology',
-		image: '/img1.png',
-		label: '#FFBD59',
-	},
-];
+interface RecipientData {
+	mail: string;
+	token: string;
+	phone: string;
+	firstName: string;
+	lastName: string;
+}
+
+interface LastMessage {
+	sender: string;
+	token: string;
+	recipient: string;
+	timestamp: number;
+	time_day: string;
+	time_month: string;
+	time_year: string;
+	message: string;
+}
+
+interface ChatResponse {
+	recipient: string;
+	recipientData: RecipientData;
+	lastMessage: LastMessage;
+}
 
 const UsersList = () => {
-	const router = useNavigate();
-	const singleMessege = (id: number) => {
-		router(`/chats/${id}`);
-	};
+	const [usertoken, setUsertoken] = useState('');
+	const [chats, setChats] = useState<ChatResponse[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const navigate = useNavigate();
 
 	const { isActive } = useConverstion();
 	// console.log(isActive);
+
+	useEffect(() => {
+		// Fetch mail from localStorage when the component mounts
+		const userData = localStorage.getItem('dets');
+		if (userData) {
+			const userObject = JSON.parse(userData);
+
+			setUsertoken(userObject.token);
+		}
+	}, []);
+
+	const getUserChats = async () => {
+		setIsLoading(true);
+		try {
+			const res = await GetUserChat(usertoken);
+			setChats(res);
+		} catch {
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (usertoken) {
+			getUserChats();
+		}
+	}, [usertoken]);
+
+	console.log(chats);
+
+	const singleMessege = (chat: ChatResponse) => {
+		navigate(`/chats/${chat.recipientData.token}`, {
+			state: { chat, isNewChat: false },
+		});
+	};
 
 	return (
 		<div
@@ -169,56 +110,65 @@ const UsersList = () => {
 
 			{/* users/chat details */}
 			<div className=' mt-10 overflow-y-scroll h-[76%] lg:h-[88%]'>
-				<div className='flex flex-col gap-5 sm:gap-4'>
-					{doctors?.map((doctor, index) => (
-						<button
-							key={index}
-							className='flex items-center gap-4 hover:bg-blue-gray-100 p-1 sm:p-2'
-							onClick={() => {
-								singleMessege(index);
-							}}>
-							{/* imgae */}
-							<div className='w-[3rem] md:w-[4rem]'>
-								<div className=' w-[2.5rem] md:w-[3.5rem] aspect-square rounded-full overflow-hidden'>
-									<img
-										className='w-full h-full object-cover object-center'
-										src={doctor?.image}
-										alt={doctor?.name}
-									/>
+				{isLoading ? (
+					<div className='w-full grid items-center justify-center mt-10'>
+						<Loader />
+					</div>
+				) : (
+					<div className='flex flex-col gap-5 sm:gap-4'>
+						{chats?.map((chat, index) => (
+							<button
+								key={index}
+								className='flex items-center gap-4 hover:bg-blue-gray-100 p-1 sm:p-2'
+								onClick={() => {
+									singleMessege(chat);
+								}}>
+								{/* imgae */}
+								<div className='w-[3rem] md:w-[4rem]'>
+									<div className=' w-[2.5rem] md:w-[3.5rem] aspect-square rounded-full overflow-hidden'>
+										<img
+											className='w-full h-full object-cover object-center'
+											src={'/img1.png'}
+											alt={chat?.recipientData?.firstName}
+										/>
+									</div>
 								</div>
-							</div>
-							{/* details */}
-							<div className='w-full'>
-								{/* name/field */}
-								<div className='flex w-full justify-between'>
-									<div
-										className='flex items-center gap-2 md:w-[18rem] overflow-hidden whitespace-nowrap
+								{/* details */}
+								<div className='w-full'>
+									{/* name/field */}
+									<div className='flex w-full justify-between'>
+										<div
+											className='flex items-center gap-2 md:w-[18rem] overflow-hidden whitespace-nowrap
                                             '>
-										<p className='text-sm sm:text-base md:text-lg font-semibold'>
-											{doctor?.name}
-										</p>
+											<p className='text-sm sm:text-base md:text-lg font-semibold'>
+												{chat?.recipientData.firstName}{' '}
+												{chat?.recipientData.lastName}
+											</p>
 
-										<p className='text-[8px] bg-yellow-200 px-1 rounded-2xl'>
-											{doctor?.field}
+											<p className='text-[8px] sm:text-sm bg-yellow-200 px-1 rounded-2xl'>
+												doctor?.field
+											</p>
+										</div>
+										<p className='text-[10px] sm:text-sm md:text-base text-[#707991]'>
+											{FormatTime(chat?.lastMessage.timestamp)}
 										</p>
 									</div>
-									<p className='text-[10px] sm:text-sm md:text-base text-[#707991]'>
-										18:30
-									</p>
-								</div>
-								{/* label/count */}
-								<div className='flex w-full justify-between gap-4 md:mt-1'>
-									<p className='text-xs sm:text-sm md:text-base text-[#707991]'>
-										{doctor?.label}
-									</p>
-									<div className='grid items-center justify-center bg-greens w-5 lg:w-6 aspect-square rounded-full'>
-										<p className='text-white text-[10px] lg:text-xs'>2</p>
+									{/* label/count */}
+									<div className='flex w-full justify-between gap-4 md:mt-1 items-center'>
+										<p className='text-xs sm:text-sm md:text-base text-[#707991]'>
+											doctor?.label
+										</p>
+										<div>
+											<div className='grid items-center justify-center bg-greens w-2 lg:w-2 aspect-square rounded-full'>
+												<p className='text-white text-[10px] lg:text-xs'></p>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</button>
-					))}
-				</div>
+							</button>
+						))}
+					</div>
+				)}
 			</div>
 		</div>
 	);

@@ -3,11 +3,13 @@ import {
 	Chats,
 	Dashboard,
 	Dlogin,
+	DoctorsBySpecialty,
 	Dsignup,
 	FindDoctors,
 	Plogin,
 	Psignup,
 	SingleChats,
+	VerifyEmail,
 } from './components';
 
 function App() {
@@ -24,11 +26,19 @@ function App() {
 
 				{/* doctors signup */}
 				<Route path='/doctors/signup' element={<Dsignup />} />
+
+				<Route path='/verify-email' element={<VerifyEmail />} />
+
 				{/* dashboard poage */}
 				<Route path='/' element={<Dashboard />} />
 
 				{/* find doctors page */}
 				<Route path='/find-doctor' element={<FindDoctors />} />
+				{/* find doctors by specialty */}
+				<Route
+					path='/find-doctor/:specialty'
+					element={<DoctorsBySpecialty />}
+				/>
 
 				{/* chat */}
 				<Route path='/chats' element={<Chats />} />

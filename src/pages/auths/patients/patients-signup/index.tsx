@@ -1,4 +1,4 @@
-import { PsignupPage } from '../../../components';
+import { PsignupPage } from '../../../../components';
 
 const Psignup = () => {
 	return (

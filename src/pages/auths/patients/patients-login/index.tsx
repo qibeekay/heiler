@@ -1,4 +1,4 @@
-import { PloginPage } from '../../../components';
+import { PloginPage } from '../../../../components';
 
 const Plogin = () => {
 	return (

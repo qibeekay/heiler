@@ -1,23 +1,26 @@
-import { FormEvent, useState } from 'react';
-import { IoEyeOffSharp, IoEyeSharp } from 'react-icons/io5';
-import { Link, useNavigate } from 'react-router-dom';
-import { UserLogin } from '../../../api/auth';
+import { FormEvent, useEffect, useState } from 'react';
+import Loader from '../../../components/loader/Loader';
+import { VerifyMail } from '../../../api/auth';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import Loader from '../../loader/Loader';
 
-const PloginPage = () => {
-	const [showPassword, setShowPassword] = useState(false);
+const VerifyEmail = () => {
+	const [mail, setMail] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const navigate = useNavigate();
 
-	const togglePasswordVisibility = () => {
-		setShowPassword((prevState) => !prevState);
-	};
+	useEffect(() => {
+		// Fetch mail from localStorage when the component mounts
+		const storedMail = localStorage.getItem('emailed');
+		if (storedMail) {
+			setMail(storedMail);
+		}
+	}, []);
 
 	const [formData, setFormData] = useState({
 		mail: '',
-		pword: '',
+		code: '',
 	});
 
 	const handleChange = (event: any) => {
@@ -30,8 +33,7 @@ const PloginPage = () => {
 		e.preventDefault();
 
 		try {
-			const res = await UserLogin(formData);
-
+			const res = await VerifyMail({ ...formData, mail: mail });
 			if (res) {
 				setTimeout(() => {
 					navigate('/');
@@ -50,8 +52,8 @@ const PloginPage = () => {
 				<div className='w-full h-full flex flex-col items-center justify-center'>
 					{/* form */}
 					<form
-						className='bg-white rounded-xl w-[90%] sm:w-[30rem] md:w-[31rem] py-[1rem] px-[2rem] my-[2rem] overflow-hidden relative'
-						onSubmit={handleSubmit}>
+						onSubmit={handleSubmit}
+						className='bg-white rounded-xl w-[90%] sm:w-[30rem] md:w-[31rem] py-[1rem] px-[2rem] my-[2rem] overflow-hidden relative'>
 						{/* header text/images */}
 						<div className='pt-4'>
 							{/* image */}
@@ -65,9 +67,9 @@ const PloginPage = () => {
 
 							{/* header text */}
 							<div className='text-center'>
-								<h1 className='font-semibold text-3xl'>Welcome Back</h1>
+								<h1 className='font-semibold text-3xl'>Verify Account</h1>
 								<p className=' text-lightDark mt-2'>
-									Log in to continue to your dashboard
+									We have sent you a verification Email. Confirm your account
 								</p>
 							</div>
 						</div>
@@ -79,56 +81,18 @@ const PloginPage = () => {
 								<input
 									className='p-4 rounded-lg bg-bgGreen text-[#858585] placeholder:text-[#858585] border border-[#C2C8D0]/60 text-lg w-full outline-[#C2C8D0]'
 									type='text'
-									name='mail'
-									value={formData.mail}
+									placeholder='Enter your verifcation code'
+									name='code'
+									value={formData.code}
 									onChange={handleChange}
-									placeholder='Email Address'
 								/>
-							</div>
-
-							{/* password */}
-							<div className='relative'>
-								<input
-									className='p-4 rounded-lg bg-bgGreen text-[#858585] placeholder:text-[#858585] border border-[#C2C8D0]/60 text-lg w-full outline-[#C2C8D0]'
-									name='pword'
-									value={formData.pword}
-									onChange={handleChange}
-									type={showPassword ? 'text' : 'password'}
-									placeholder='Password'
-								/>
-								<button
-									type='button'
-									onClick={togglePasswordVisibility}
-									className='absolute top-1/2 right-4 transform -translate-y-1/2 text-black/60'>
-									{showPassword ? (
-										<IoEyeOffSharp size={25} />
-									) : (
-										<IoEyeSharp size={25} />
-									)}
-								</button>
-								{/* forot passord */}
-								<div className='w-full flex items-center justify-end'>
-									<Link to={''} className='text-greens text-lg text-right'>
-										Forgot password?
-									</Link>
-								</div>
 							</div>
 						</div>
 
 						{/* button */}
 						<button className='w-full border border-greens bg-greens text-white font-bold text-lg font-inter rounded py-4 shadow-sm'>
-							{isLoading ? <Loader /> : 'Login'}
+							{isLoading ? <Loader /> : 'Verify'}
 						</button>
-
-						{/*  don't have an account */}
-						<div className='mt-10 text-center'>
-							<p className='text-[#818181]'>
-								Dont have an account?{' '}
-								<Link className='text-greens font-bold' to={'/patients/signup'}>
-									Sign up
-								</Link>
-							</p>
-						</div>
 					</form>
 
 					{/* footer link */}
@@ -148,4 +112,4 @@ const PloginPage = () => {
 	);
 };
 
-export default PloginPage;
+export default VerifyEmail;

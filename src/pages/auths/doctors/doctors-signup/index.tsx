@@ -1,4 +1,4 @@
-import DsignupPage from '../../../components/auths/doctors/DsignupPage';
+import DsignupPage from '../../../../components/auths/doctors/DsignupPage';
 
 const Dsignup = () => {
 	return (

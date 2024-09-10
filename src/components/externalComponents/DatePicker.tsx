@@ -9,8 +9,25 @@ import { DayPicker } from 'react-day-picker';
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { TbCalendarStats } from 'react-icons/tb';
 
-export default function DatePicker() {
+interface DatePickerProps {
+	selectedDate: string;
+	onDateChange: (selectedDate: string) => void;
+}
+
+export default function DatePicker({
+	selectedDate,
+	onDateChange,
+}: DatePickerProps) {
 	const [date, setDate] = React.useState<Date>();
+
+	// Function to handle date selection and format it
+	const handleDateSelect = (selected: Date | undefined) => {
+		if (selected) {
+			const formattedDate = format(selected, 'dd/MM/yyyy');
+			setDate(selected);
+			onDateChange(formattedDate); // Pass the formatted date to the parent component
+		}
+	};
 
 	return (
 		<div>
@@ -20,8 +37,8 @@ export default function DatePicker() {
 						<input
 							className=' bg-transparent placeholder:text-[#858585] outline-none cursor-pointer'
 							placeholder='Select a Date'
-							onChange={() => null}
-							value={date ? format(date, 'PPP') : ''}
+							onChange={(e) => onDateChange(e.target.value)}
+							value={selectedDate}
 							// disabled
 							// crossOrigin={undefined}
 						/>
@@ -32,7 +49,7 @@ export default function DatePicker() {
 					<DayPicker
 						mode='single'
 						selected={date}
-						onSelect={setDate}
+						onSelect={handleDateSelect}
 						showOutsideDays
 						className='border-0'
 						classNames={{
