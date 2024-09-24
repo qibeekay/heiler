@@ -33,6 +33,18 @@ import FdDoctorBySpecialty from './findDoctoCom/DoctorBySpecialty/FdDoctorBySpec
 import FdDoctorBySpecialtyCat from './findDoctoCom/DoctorBySpecialty/FdDoctorBySpecialtyCat';
 import FdDoctorBySpecialtyMain from './findDoctoCom/DoctorBySpecialty/FdDoctorBySpecialtyMain';
 import NewChatPage from './ChatsCom/singleChat/NewChatPage';
+import FindPatients from '../pages/find-patients';
+import FindPatientsPage from './findPatientCom/FindPatientsPage';
+import FpPatientsCategory from './findPatientCom/FpPatientsCategory';
+import FpMainnav from './findPatientCom/FpMainnav';
+import Profile from '../pages/profile';
+import ProfilesMain from './profiles/ProfilesMain';
+import ProfilesPage from './profiles/ProfilesPage';
+import MedicalRecord from '../pages/medical';
+import PatientRecordCat from './PatientMedicalRecord/PatientRecordCat';
+import PatientRecordMain from './PatientMedicalRecord/PatientRecordMain';
+import PatientRecordPage from './PatientMedicalRecord/PatientRecordPage';
+import CaseNote from './ChatsCom/CaseNote';
 
 export {
 	Plogin,
@@ -70,4 +82,16 @@ export {
 	FdDoctorBySpecialtyCat,
 	FdDoctorBySpecialtyMain,
 	NewChatPage,
+	FindPatients,
+	FindPatientsPage,
+	FpMainnav,
+	FpPatientsCategory,
+	Profile,
+	ProfilesMain,
+	ProfilesPage,
+	MedicalRecord,
+	PatientRecordCat,
+	PatientRecordMain,
+	PatientRecordPage,
+	CaseNote,
 };

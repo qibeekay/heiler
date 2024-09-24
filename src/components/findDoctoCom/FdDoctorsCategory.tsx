@@ -70,7 +70,7 @@ const FdDoctorsCategory = () => {
 		if (userData) {
 			const userObject = JSON.parse(userData);
 
-			setUsertoken(userObject.token);
+			setUsertoken(userObject.data.token);
 		}
 	}, []);
 

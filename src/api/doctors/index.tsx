@@ -48,7 +48,7 @@ export const SearchDoctor = async (payload: {
 			toast.error(response.data.message);
 			return false; // Verification failed
 		} else {
-			toast.success('Verification successful!');
+			// toast.success('Verification successful!');
 			return true; // Verification succeeded
 		}
 	} catch (error: any) {
@@ -77,7 +77,7 @@ export const GetDoctorBySpecialty = async (id: number, usertoken: string) => {
 			// return false; // Verification failed
 			return [];
 		} else {
-			toast.success('Verification successful!');
+			// toast.success('Verification successful!');
 			// return true; // Verification succeeded
 			return response.data.data;
 		}

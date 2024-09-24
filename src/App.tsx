@@ -6,7 +6,10 @@ import {
 	DoctorsBySpecialty,
 	Dsignup,
 	FindDoctors,
+	FindPatients,
+	MedicalRecord,
 	Plogin,
+	Profile,
 	Psignup,
 	SingleChats,
 	VerifyEmail,
@@ -34,11 +37,20 @@ function App() {
 
 				{/* find doctors page */}
 				<Route path='/find-doctor' element={<FindDoctors />} />
+
+				{/* find patients page */}
+				<Route path='/find-patient' element={<FindPatients />} />
+
 				{/* find doctors by specialty */}
 				<Route
 					path='/find-doctor/:specialty'
 					element={<DoctorsBySpecialty />}
 				/>
+				{/* view patients medical record */}
+				<Route path='/medical-record/:id' element={<MedicalRecord />} />
+
+				{/* doctors profile */}
+				<Route path='/profile' element={<Profile />} />
 
 				{/* chat */}
 				<Route path='/chats' element={<Chats />} />

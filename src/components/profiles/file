@@ -1,0 +1,27 @@
+{/* password */}
+							<div className='relative'>
+								<div className='flex items-center gap-4 relative'>
+									<input
+										className='p-4 rounded-lg bg-bgGreen text-[#858585] placeholder:text-[#858585] border border-[#C2C8D0]/60 text-lg w-full outline-[#C2C8D0]'
+										name='pword'
+										type={showPassword ? 'text' : 'password'}
+										placeholder='Password'
+									/>
+
+									{/* update password */}
+									<button className='bg-greens w-10 aspect-square rounded-md grid items-center justify-center'>
+										<FaCheck className='text-white' />
+									</button>
+
+									<button
+										type='button'
+										onClick={togglePasswordVisibility}
+										className='absolute top-6 right-16 transform text-black/60'>
+										{showPassword ? (
+											<IoEyeOffSharp size={25} />
+										) : (
+											<IoEyeSharp size={25} />
+										)}
+									</button>
+								</div>
+							</div>

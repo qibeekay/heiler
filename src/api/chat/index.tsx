@@ -23,7 +23,7 @@ export const GetUserChat = async (usertoken: string) => {
 			// return false; // Verification failed
 			return [];
 		} else {
-			toast.success('Verification successful!');
+			// toast.success('Verification successful!');
 			// return true; // Verification succeeded
 			return response.data.data;
 		}
@@ -55,7 +55,7 @@ export const SendUserChat = async (payload: {
 			// return false; // Verification failed
 			return [];
 		} else {
-			toast.success('Verification successful!');
+			// toast.success('Verification successful!');
 			// return true; // Verification succeeded
 			return response.data.data;
 		}

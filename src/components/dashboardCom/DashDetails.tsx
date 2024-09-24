@@ -1,7 +1,41 @@
+import { useEffect, useState } from 'react';
 import { IoEyeOffSharp } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
+import { GetUserData } from '../../api/auth';
 
 const DashDetails = () => {
+	const [usertoken, setUsertoken] = useState('');
+	const [user, setUser] = useState([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+
+	useEffect(() => {
+		// Fetch mail from localStorage when the component mounts
+		const userData = localStorage.getItem('dets');
+		if (userData) {
+			const userObject = JSON.parse(userData);
+
+			setUsertoken(userObject.data.token);
+		}
+	}, []);
+
+	console.log(usertoken);
+	const getUserData = async () => {
+		setIsLoading(true);
+		try {
+			const res = await GetUserData(usertoken);
+			setUser(res);
+		} catch {
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (usertoken) {
+			getUserData();
+		}
+	}, [usertoken]);
+
 	return (
 		<div className='w-full text-dark font-inter pt-[9.5rem] pb-[8rem] md:pb-20 py-4 px-4 sm:px-8 xl:px-[5rem]'>
 			<div className='flex flex-col llg:flex-row gap-6 xl:gap-10'>

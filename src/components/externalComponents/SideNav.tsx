@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useConverstion } from '../useConversation';
 
 const SideNav = () => {
 	const location = useLocation();
 	const params = useParams();
+	const [usertype, setUsertype] = useState<string | ''>('');
 	const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+
+	useEffect(() => {
+		// Fetch mail from localStorage when the component mounts
+		const userType = localStorage.getItem('type')?.trim();
+		if (userType) {
+			const cleanedUserType = userType.replace(/"/g, '');
+			setUsertype(cleanedUserType);
+		}
+	}, []);
 
 	const { isActive } = useConverstion();
 
@@ -20,12 +30,12 @@ const SideNav = () => {
 			miconHover: '/mhomeD.png',
 		},
 		{
-			to: '/find-doctor',
-			label: 'Doctor',
-			iconDefault: '/doctorL.png',
-			iconHover: '/doctorD.png',
-			miconDefault: '/mdoctorL.png',
-			miconHover: '/mdoctorD.png',
+			to: usertype === 'User' ? '/find-doctor' : '/find-patient',
+			label: usertype === 'User' ? 'Doctor' : 'Patient',
+			iconDefault: usertype === 'User' ? '/doctorL.png' : '/patientL.png',
+			iconHover: usertype === 'User' ? '/doctorD.png' : '/patientD.png',
+			miconDefault: usertype === 'User' ? '/mdoctorL.png' : '/mpatientL.png',
+			miconHover: usertype === 'User' ? '/mdoctorD.png' : '/mpatientD',
 		},
 		{
 			to: '/chats',

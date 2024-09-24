@@ -46,7 +46,7 @@ const UsersList = () => {
 		if (userData) {
 			const userObject = JSON.parse(userData);
 
-			setUsertoken(userObject.token);
+			setUsertoken(userObject.data.token);
 		}
 	}, []);
 
@@ -68,6 +68,7 @@ const UsersList = () => {
 	}, [usertoken]);
 
 	console.log(chats);
+	console.log(usertoken);
 
 	const singleMessege = (chat: ChatResponse) => {
 		navigate(`/chats/${chat.recipientData.token}`, {

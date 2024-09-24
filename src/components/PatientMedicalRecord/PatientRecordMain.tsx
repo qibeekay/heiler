@@ -1,22 +1,15 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { FdDoctorBySpecialtyCat, Header } from '../../../components';
-import { useEffect, useState } from 'react';
-import { GetDoctorBySpecialty } from '../../../api/doctors';
-import Loader from '../../loader/Loader';
+import React, { useEffect, useState } from 'react';
+import Header from '../externalComponents/Header';
 import { RiSearch2Line } from 'react-icons/ri';
 import { HiChevronLeft } from 'react-icons/hi2';
+import { useNavigate, useParams } from 'react-router-dom';
+import Loader from '../loader/Loader';
+import PatientRecordCat from './PatientRecordCat';
+import { GetMedicalRecord } from '../../api/patients';
 
-interface Doctor {
-	token: string;
-	firstName: string;
-	lastName: string;
-	mail: string;
-	timestamp: string;
-}
-
-const FdDoctorBySpecialtyMain = () => {
+const PatientRecordMain = () => {
+	const [response, setResponse] = useState([]);
 	const [usertoken, setUsertoken] = useState('');
-	const [response, setResponse] = useState<Doctor[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const searchId = useParams();
 
@@ -27,7 +20,9 @@ const FdDoctorBySpecialtyMain = () => {
 	};
 
 	// Convert `id` to a number if it is defined; otherwise, it remains `undefined`
-	const id = searchId.specialty ? parseInt(searchId.specialty, 10) : 0;
+	const id = searchId.id;
+
+	console.log(id);
 
 	useEffect(() => {
 		// Fetch mail from localStorage when the component mounts
@@ -39,11 +34,10 @@ const FdDoctorBySpecialtyMain = () => {
 		}
 	}, []);
 
-	// console.log(usertoken, id);
-	const getDoctorSpecialty = async () => {
+	const getPatientRecord = async () => {
 		setIsLoading(true);
 		try {
-			const res = await GetDoctorBySpecialty(id!, usertoken);
+			const res = await GetMedicalRecord(id!, usertoken);
 			setResponse(res);
 		} catch {
 		} finally {
@@ -52,10 +46,10 @@ const FdDoctorBySpecialtyMain = () => {
 	};
 
 	useEffect(() => {
-		if (usertoken) {
-			getDoctorSpecialty();
+		if (usertoken && id) {
+			getPatientRecord();
 		}
-	}, [usertoken]);
+	}, [usertoken, id]);
 
 	return (
 		<div className='w-full lg:w-[82%] xll:w-[85%] bg-white'>
@@ -91,11 +85,13 @@ const FdDoctorBySpecialtyMain = () => {
 				<div className='w-full grid items-center justify-center mt-10'>
 					<Loader />
 				</div>
+			) : response.length === 0 ? (
+				<div className='text-center mt-10'>No record found</div>
 			) : (
-				<FdDoctorBySpecialtyCat response={response} />
+				<PatientRecordCat response={response} />
 			)}
 		</div>
 	);
 };
 
-export default FdDoctorBySpecialtyMain;
+export default PatientRecordMain;

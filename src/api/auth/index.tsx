@@ -117,12 +117,13 @@ export const DoctorLogin = async (userData: {
 			},
 		});
 
-		console.log(response.data);
+		console.log(response.data.success);
 		if (response.data.success === false) {
 			toast.error(response.data.message);
 			return false; // Verification failed
 		} else {
 			toast.success('Verification successful!');
+			localStorage.setItem('dets', JSON.stringify(response.data.data));
 			return true; // Verification succeeded
 		}
 	} catch (error: any) {
@@ -155,5 +156,37 @@ export const VerifyMail = async (userData: {
 		console.error('Verifying Error', error);
 		toast.error('Error verifying the account');
 		throw new Error(error.response?.data?.message || 'Failed to verify');
+	}
+};
+
+// get user data
+export const GetUserData = async (usertoken: string) => {
+	try {
+		const response = await axios.post(
+			`${URL}/auth/userData`,
+			{ usertoken },
+			{
+				headers: {
+					Authorization: `Bearer ${bearer}`,
+				},
+			}
+		);
+
+		console.log(response.data.data);
+		if (response.data.success === false) {
+			toast.error(response.data.message);
+			// return false; // Verification failed
+			return [];
+		} else {
+			// toast.success('Verification successful!');
+			// return true; // Verification succeeded
+			// Store the entire response in local storage
+			localStorage.setItem('type', JSON.stringify(response.data.data.userType));
+			return response.data.data;
+		}
+	} catch (error: any) {
+		console.error('user Error', error);
+		toast.error('Error getting user data ');
+		throw new Error(error.response?.data?.message || 'Failed to get');
 	}
 };

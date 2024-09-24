@@ -1,6 +1,6 @@
 import { FaArrowLeft } from 'react-icons/fa';
 import { MdInsertDriveFile } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { init } from 'emoji-mart';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
@@ -64,18 +64,21 @@ interface ReadResponse {
 interface Props {
 	doctor?: Doctor;
 	chat?: ChatResponse;
+	onCreateCaseNote?: any;
 }
 
 // Initialize emoji data
 init({ data });
 
-const ChattingPage = ({ chat }: Props) => {
+const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
 	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 	const [chats, setChats] = useState<ReadResponse[]>([]);
 	const [usertoken, setUsertoken] = useState('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [selectedImage, setSelectedImage] = useState<string | ''>('');
 	const [modalImage, setModalImage] = useState<string | null>(null);
+
+	const navigate = useNavigate();
 
 	const [formData, setFormData] = useState({
 		sender: '',
@@ -114,7 +117,7 @@ const ChattingPage = ({ chat }: Props) => {
 		const userData = localStorage.getItem('dets');
 		if (userData) {
 			const userObject = JSON.parse(userData);
-			setUsertoken(userObject.token);
+			setUsertoken(userObject.data.token);
 		}
 	}, []);
 
@@ -144,6 +147,8 @@ const ChattingPage = ({ chat }: Props) => {
 			sender: usertoken,
 			recipient: `${chat?.recipientData.token}`,
 		};
+
+		console.log(payload);
 		try {
 			const res = await SendUserChat(payload);
 			setChats((prevChats) => [...prevChats, res]);
@@ -225,6 +230,11 @@ const ChattingPage = ({ chat }: Props) => {
 		setModalImage(null);
 	};
 
+	// create a case note
+	const createCaseNote = () => {
+		onCreateCaseNote();
+	};
+
 	return (
 		<div className='w-full h-full relative'>
 			<div className='w-full h-full relative'>
@@ -248,17 +258,17 @@ const ChattingPage = ({ chat }: Props) => {
 
 							<div className=''>
 								<p>
-									Dr. {chat?.recipientData.firstName}{' '}
-									{chat?.recipientData.lastName}
+									{chat?.recipientData.firstName} {chat?.recipientData.lastName}
 								</p>
 								<p>online</p>
 							</div>
 						</div>
 					</div>
 
-					<div>
-						<MdInsertDriveFile size={30} />
-					</div>
+					{/* click to create caseNote */}
+					<button>
+						<MdInsertDriveFile size={30} onClick={createCaseNote} />
+					</button>
 				</div>
 
 				{isLoading ? (
