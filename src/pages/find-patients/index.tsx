@@ -1,11 +1,11 @@
-import { FindPatientsPage } from '../../components';
+// import { FindPatientsPage } from '../../components';
 
-const FindPatients = () => {
-	return (
-		<div>
-			<FindPatientsPage />
-		</div>
-	);
-};
+// const FindPatients = () => {
+// 	return (
+// 		<div>
+// 			<FindPatientsPage />
+// 		</div>
+// 	);
+// };
 
-export default FindPatients;
+// export default FindPatients;
