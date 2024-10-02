@@ -25,7 +25,7 @@ export const UserRegister = async (userData: {
       },
     });
 
-    console.log(response.data.success);
+    // console.log(response.data.success);
     if (response.data.success === false) {
       toast.error(response.data.message);
       return false; // Verification failed
@@ -50,13 +50,17 @@ export const UserLogin = async (userData: { mail: string; pword: string }) => {
       },
     });
 
-    console.log(response.data);
+    console.log("Usert", response.data.data.data);
+    console.log("Token", response.data.data.data.token);
     if (response.data.success === false) {
       toast.error(response.data.message);
       return false; // Verification failed
     } else {
       toast.success("Verification successful!");
-      localStorage.setItem("dets", JSON.stringify(response.data.data));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(response.data.data.data.token)
+      );
       return true; // Verification succeeded
     }
   } catch (error: any) {
@@ -89,7 +93,7 @@ export const DoctorRegister = async (userData: {
       },
     });
 
-    console.log(response.data.success);
+    // console.log(response.data.success);
     if (response.data.success === false) {
       toast.error(response.data.message);
       return false; // Verification failed
@@ -117,13 +121,16 @@ export const DoctorLogin = async (userData: {
       },
     });
 
-    console.log(response.data.success);
+    // console.log(response.data.success);
     if (response.data.success === false) {
       toast.error(response.data.message);
       return false; // Verification failed
     } else {
       toast.success("Verification successful!");
-      localStorage.setItem("dets", JSON.stringify(response.data.data));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(response.data.data.data.token)
+      );
       return true; // Verification succeeded
     }
   } catch (error: any) {
@@ -149,7 +156,7 @@ export const VerifyMail = async (userData: {
       toast.error(response.data.message);
       return false; // Verification failed
     } else {
-      localStorage.setItem("dets", JSON.stringify(response.data.data));
+      localStorage.setItem("user", JSON.stringify(response.data.data.token));
       return true; // Verification succeeded
     }
   } catch (error: any) {
@@ -182,6 +189,7 @@ export const GetUserData = async (usertoken: string) => {
       // return true; // Verification succeeded
       // Store the entire response in local storage
       localStorage.setItem("type", JSON.stringify(response.data.data.userType));
+      localStorage.setItem("dets", JSON.stringify(response.data.data.data));
       return response.data.data;
     }
   } catch (error: any) {

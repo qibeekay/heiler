@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { GetUserData } from "../../api/auth";
 
 interface Props {
   date?: string;
@@ -25,22 +26,38 @@ const Header = ({ date, title }: Props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch mail from localStorage when the component mounts
-    const userData = localStorage.getItem("dets");
-    if (userData) {
-      const userObject = JSON.parse(userData);
-
-      setUsertoken(userObject?.data?.token);
-      setFirstname(userObject?.data?.firstName);
-      setLastname(userObject.data.lastName);
-      setPhoto(userObject.data.photo);
-    }
+    // Fetch user details from localStorage when the component mounts
     const userType = localStorage.getItem("type")?.trim();
     if (userType) {
       const cleanedUserType = userType.replace(/"/g, "");
       setUsertype(cleanedUserType);
     }
+    const userToken = localStorage.getItem("user")?.trim();
+    if (userToken) {
+      const cleanedUserToken = userToken.replace(/"/g, "");
+      setUsertoken(cleanedUserToken);
+    }
   }, []);
+
+  const getUserData = async () => {
+    // setIsLoading(true);
+    try {
+      const res = await GetUserData(usertoken);
+      setFirstname(res.data.firstName);
+      setLastname(res.data.lastName);
+      setPhoto(res.data.photo);
+      // setUser(res);
+    } catch {}
+    // finally {
+    //   setIsLoading(false);
+    // }
+  };
+
+  useEffect(() => {
+    if (usertoken) {
+      getUserData();
+    }
+  }, [usertoken]);
 
   const handleLogoutPage = () => {
     if (usertype === "User") {
@@ -91,7 +108,7 @@ const Header = ({ date, title }: Props) => {
                       <div className="w-10 md:w-14 aspect-square rounded-md overflow-hidden ">
                         <img
                           className="w-full h-full object-cover"
-                          src={photo || "/doctors.png"}
+                          src={photo || "/doctors.jpg"}
                           alt=""
                         />
                       </div>

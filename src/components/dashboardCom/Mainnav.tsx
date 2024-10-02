@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { DashDetails, Header } from "../../components";
 const Mainnav = () => {
   const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
 
   useEffect(() => {
     // Fetch mail from localStorage when the component mounts
@@ -10,8 +9,7 @@ const Mainnav = () => {
     if (userData) {
       const userObject = JSON.parse(userData);
 
-      setFirstname(userObject.data.firstName);
-      setLastname(userObject.data.lastName);
+      setFirstname(userObject?.firstName);
     }
   }, []);
 
@@ -26,10 +24,7 @@ const Mainnav = () => {
   return (
     <div className="w-full lg:w-[82%] xll:w-[85%] bg-white">
       {/* header */}
-      <Header
-        date={getCurrentFormattedDate()}
-        title={`Hi, ${firstname}` || ""}
-      />
+      <Header date={getCurrentFormattedDate()} title={"Welcome"} />
 
       {/* other details */}
       <DashDetails />

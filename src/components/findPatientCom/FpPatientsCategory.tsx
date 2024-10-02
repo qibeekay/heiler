@@ -41,11 +41,10 @@ const FpPatientsCategory = () => {
 
   useEffect(() => {
     // Fetch mail from localStorage when the component mounts
-    const userData = localStorage.getItem("dets");
-    if (userData) {
-      const userObject = JSON.parse(userData);
-
-      setUsertoken(userObject.data.token);
+    const userToken = localStorage.getItem("user")?.trim();
+    if (userToken) {
+      const cleanedUserToken = userToken.replace(/"/g, "");
+      setUsertoken(cleanedUserToken);
     }
   }, []);
 
@@ -129,7 +128,7 @@ const FpPatientsCategory = () => {
                         <div className="w-[106px] h-[106px] rounded-full overflow-hidden bg-[#fafafa]">
                           <img
                             className="w-full h-full object-cover"
-                            src="/doctors.png"
+                            src="/doctors.jpg"
                             alt=""
                           />
                         </div>

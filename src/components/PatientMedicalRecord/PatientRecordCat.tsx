@@ -46,7 +46,7 @@ const PatientRecordCat = ({ response }: Props) => {
                 <div className="w-4 aspect-square rounded-full overflow-hidden">
                   <img
                     className="w-full h-full object-cover"
-                    src={record?.doctorData?.photo || "/doctors.png"}
+                    src={record?.doctorData?.photo || "/doctors.jpg"}
                     alt=""
                   />
                 </div>
