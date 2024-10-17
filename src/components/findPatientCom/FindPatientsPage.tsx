@@ -1,17 +1,17 @@
-import { FpMainnav, SideNav } from '../../components';
+import { FpMainnav, SideNav } from "../../components";
 
 const FindPatientsPage = () => {
-	return (
-		<div>
-			{/* side nav */}
-			<SideNav />
+  return (
+    <div>
+      {/* side nav */}
+      <SideNav />
 
-			{/* mainnave */}
-			<div className='flex justify-end'>
-				<FpMainnav />
-			</div>
-		</div>
-	);
+      {/* mainnave */}
+      <div className="flex justify-end">
+        <FpMainnav />
+      </div>
+    </div>
+  );
 };
 
 export default FindPatientsPage;

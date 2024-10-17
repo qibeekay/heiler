@@ -7,12 +7,14 @@ import {
   Dsignup,
   FindDoctors,
   MedicalRecord,
+  More,
   Onboarding,
   Plogin,
   Profile,
   Psignup,
   SingleChats,
   VerifyEmail,
+  Wallet,
 } from "./components";
 import FindPatients from "./pages/FindPatients";
 
@@ -22,8 +24,10 @@ function App() {
       <Routes>
         {/* onboarding screen */}
         <Route path="/onboarding" element={<Onboarding />} />
+
         {/* patient login */}
         <Route path="/patients/login" element={<Plogin />} />
+
         {/* patient signup */}
         <Route path="/patients/signup" element={<Psignup />} />
 
@@ -49,6 +53,7 @@ function App() {
           path="/find-doctor/:specialty"
           element={<DoctorsBySpecialty />}
         />
+
         {/* view patients medical record */}
         <Route path="/find-patient/:id" element={<MedicalRecord />} />
 
@@ -57,8 +62,15 @@ function App() {
 
         {/* chat */}
         <Route path="/chats" element={<Chats />} />
+
         {/* singlechats */}
         <Route path="/chats/:id" element={<SingleChats />} />
+
+        {/* more page */}
+        <Route path="/more" element={<More />} />
+
+        {/* wallwt page */}
+        <Route path="/wallet" element={<Wallet />} />
       </Routes>
     </main>
   );

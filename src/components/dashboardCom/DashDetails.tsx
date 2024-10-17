@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { IoEyeOffSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { WalletCard } from "../../components";
 
 const DashDetails = () => {
   return (
@@ -103,36 +104,8 @@ const DashDetails = () => {
 
         {/* side 2 */}
         <div className="mt-10 llg:mt-0 w-full md:w-[70%] mx-auto">
-          {/* wallet */}
-          <div className="rounded-2xl bg-greens h-[13rem] text-white p-4 sm:p-10 font-roboto flex flex-col justify-center sm:block">
-            {/* balance */}
-            <p className="text-lg xl:text-xl">My Balance</p>
-            {/* amount */}
-            <div className="w-full flex items-center font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl justify-between text-white/80 mt-5 sm:mt-7">
-              <p>NGN 4,562.52</p>
-              {/* eye */}
-              <IoEyeOffSharp />
-            </div>
-          </div>
-
-          {/* button */}
-          <div className="flex flex-col sm:flex-row items-center gap-x-4 w-full">
-            <button className=" bg-white text-greens font-semibold w-full flex items-center gap-4 rounded-lg py-5 justify-center mt-6 border border-greens">
-              {/* img */}
-              <div className=" w-[3rem] rounded-full grid items-center justify-center aspect-square bg-lemongreen">
-                <img className=" " src="/hospital.png" alt="" />
-              </div>
-              Add Money
-            </button>
-
-            <button className=" bg-greens text-white font-semibold w-full flex items-center gap-4 rounded-lg py-5 justify-center mt-6 border border-greens">
-              {/* img */}
-              <div className=" w-[3rem] rounded-full grid items-center justify-center aspect-square bg-lemongreen">
-                <img className=" " src="/hospital.png" alt="" />
-              </div>
-              Send Money
-            </button>
-          </div>
+          {/* wallet card */}
+          <WalletCard />
 
           {/* transaction history */}
           <div className="mt-16">

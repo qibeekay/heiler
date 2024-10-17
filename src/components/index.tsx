@@ -46,6 +46,15 @@ import PatientRecordMain from "./PatientMedicalRecord/PatientRecordMain";
 import PatientRecordPage from "./PatientMedicalRecord/PatientRecordPage";
 import CaseNote from "./ChatsCom/CaseNote";
 import Onboarding from "../pages/auths/onboarding";
+import More from "../pages/more";
+import MorePage from "./more/MorePage";
+import MoreMainnav from "./more/MoreMainnav";
+import SubscribeTab from "./more/SubscribeTab";
+import BvnTab from "./more/BvnTab";
+import WalletCard from "./externalComponents/WalletCard";
+import Wallet from "../pages/wallet";
+import WalletMainnav from "./wallets/WalletMainnav";
+import WalletPage from "./wallets/WalletPage";
 
 export {
   Plogin,
@@ -96,4 +105,13 @@ export {
   PatientRecordPage,
   CaseNote,
   Onboarding,
+  More,
+  MorePage,
+  MoreMainnav,
+  SubscribeTab,
+  BvnTab,
+  WalletCard,
+  Wallet,
+  WalletMainnav,
+  WalletPage,
 };

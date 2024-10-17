@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { GetUserData } from "../../api/auth";
+import { GetAccountData } from "../../api/wallet";
 
 interface Props {
   date?: string;
@@ -40,17 +41,10 @@ const Header = ({ date, title }: Props) => {
   }, []);
 
   const getUserData = async () => {
-    // setIsLoading(true);
-    try {
-      const res = await GetUserData(usertoken);
-      setFirstname(res.data.firstName);
-      setLastname(res.data.lastName);
-      setPhoto(res.data.photo);
-      // setUser(res);
-    } catch {}
-    // finally {
-    //   setIsLoading(false);
-    // }
+    const res = await GetUserData(usertoken);
+    setFirstname(res.data.firstName);
+    setLastname(res.data.lastName);
+    setPhoto(res.data.photo);
   };
 
   useEffect(() => {
