@@ -59,12 +59,12 @@ const SideNav = () => {
     // 	iconDefault: '/notifyL.png',
     // 	iconHover: '/notifyD.png',
     // },
-    {
-      to: "/cards",
-      label: "Cards",
-      iconDefault: "/cardL.png",
-      iconHover: "/cardD.png",
-    },
+    // {
+    //   to: "/cards",
+    //   label: "Cards",
+    //   iconDefault: "/cardL.png",
+    //   iconHover: "/cardD.png",
+    // },
     {
       to: "/more",
       label: "More",

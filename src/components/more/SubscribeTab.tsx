@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { GetPackages, Subscribe } from "../../api/wallet";
 import Loader from "../loader/Loader";
+import { ToastContainer } from "react-toastify";
 
 interface packages {
   id: number;
@@ -10,47 +11,28 @@ interface packages {
   usertoken: string;
 }
 
-const SubscribeTab = ({ usertoken }: { usertoken: string }) => {
-  const [pkgs, setPkgs] = useState<packages[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+interface props {
+  open: any;
+  pkgs: packages[];
+}
 
-  // get packages
-  const getPackages = async () => {
-    const res = await GetPackages();
-    setPkgs(res);
-  };
-
-  useEffect(() => {
-    getPackages();
-  }, []);
-
-  // subscribe for a package
-  const subscribe = async (token: string) => {
-    setIsLoading(true);
-    const payload = { usertoken: usertoken, token };
-    try {
-      const res = await Subscribe(payload);
-      // setChats(res);
-      console.log(res);
-    } catch {
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const SubscribeTab = ({ open, pkgs }: props) => {
   return (
-    <div className="flex flex-col gap-[20px]">
+    <div className="flex flex-col gap-[20px] relative max-w-[327px] mx-auto">
       {pkgs?.map((pkg) => (
         <div
           key={pkg?.id}
-          className="relative bg-[#F5F5F5] rounded-[20px] py-[40px] px-[24px]"
+          className="relative group bg-white text-dark hover:bg-greens  rounded-[20px] py-[40px] px-[24px] border shadow"
         >
           <div>
             {/* header */}
-            <div className="text-center">
-              <p className="text-greens font-bold capitalize">{pkg?.name}</p>
-              <p className="flex items-center justify-center text-[28px] font-bold text-[#4D4D4D]">
-                NGN {pkg.amount}{" "}
-                <span className=" font-normal text-xs text-[#9c9c9c]">
+            <div className="text-center border-b pb-2">
+              <p className="text-greens group-hover:text-white font-bold capitalize">
+                {pkg?.name}
+              </p>
+              <p className="flex items-center justify-center text-[28px] font-bold text-[#4D4D4D] group-hover:text-white">
+                NGN {pkg?.amount}{" "}
+                <span className=" font-normal text-xs group-hover:text-white text-[#9c9c9c]">
                   /month
                 </span>
               </p>
@@ -65,15 +47,15 @@ const SubscribeTab = ({ usertoken }: { usertoken: string }) => {
           </div>
 
           <button
-            className="bg-greens rounded h-[70px] px-4 outline-none text-white mt-10 font-bold text-sm w-full max-w-[430px] mx-auto"
-            onClick={() => {
-              subscribe(pkg?.token);
-            }}
+            className="rounded outline-none group-hover:text-white text-greens font-bold text-sm w-full max-w-[430px] mx-auto mt-4"
+            onClick={() => open(pkg?.token)}
           >
-            {isLoading ? <Loader /> : "Get plan"}
+            Buy Now
           </button>
         </div>
       ))}
+
+      <ToastContainer />
     </div>
   );
 };

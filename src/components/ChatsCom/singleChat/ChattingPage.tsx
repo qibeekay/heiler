@@ -76,6 +76,7 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const [chats, setChats] = useState<ReadResponse[]>([]);
   const [usertoken, setUsertoken] = useState("");
+  const [bvnStatus, setBvnStatus] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | "">("");
   const [modalImage, setModalImage] = useState<string | null>(null);
@@ -123,6 +124,13 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
       setUsertype(cleanedUserType);
     }
 
+    const userData = localStorage.getItem("dets");
+    if (userData) {
+      const userObject = JSON.parse(userData);
+
+      setBvnStatus(userObject?.isBVN);
+    }
+
     const userToken = localStorage.getItem("user")?.trim();
     if (userToken) {
       const cleanedUserToken = userToken.replace(/"/g, "");
@@ -150,6 +158,13 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
   // use to send message to other users
   const sendUserChat = async (e: FormEvent) => {
     e.preventDefault();
+
+    // Check if the message is empty
+    if (!formData.message.trim() && !formData.image) {
+      // Do not send the message if it's empty or contains only spaces
+      return;
+    }
+
     setIsLoading(true);
     const payload = {
       ...formData,
@@ -419,7 +434,7 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
                   </div>
                 </div>
                 <div className="relative">
-                  <button onClick={sendUserChat}>
+                  <button onClick={sendUserChat} disabled={!bvnStatus}>
                     <IoSendSharp />
                   </button>
                 </div>
@@ -433,6 +448,9 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
             </div>
           </div>
         </form>
+        <span className={`text-red-500 ${bvnStatus ? "hidden" : "block"}`}>
+          Please Subscribe to be able to chat
+        </span>
       </div>
     </div>
   );

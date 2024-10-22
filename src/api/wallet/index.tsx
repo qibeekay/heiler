@@ -104,6 +104,39 @@ export const Subscribe = async (payload: {
       toast.error(response.data.message);
       return false; // Verification failed
     } else {
+      toast.success("Please Check mail and verify otp");
+      return true; // Verification succeeded
+    }
+  } catch (error: any) {
+    console.error("Subscription Error", error);
+    toast.error("Error subscribing");
+    throw new Error(error.response?.data?.message || "Failed to subscribe");
+  }
+};
+
+// verify Subscription
+export const VerifySubscription = async (payload: {
+  usertoken: string;
+  packageToken: string | null;
+  otp: string;
+}) => {
+  try {
+    const response = await axios.post(
+      `${URL}/wallet/charge.verifyOTP`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${bearer}`,
+        },
+      }
+    );
+
+    // console.log(response.data.success);
+    if (response.data.success === false) {
+      toast.error(response.data.message);
+      return false; // Verification failed
+    } else {
+      toast.success("Subscription Successful");
       return true; // Verification succeeded
     }
   } catch (error: any) {

@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { VerifyBvn } from "../../api/kyc";
 import Loader from "../loader/Loader";
+import { ToastContainer } from "react-toastify";
 
 const BvnTab = ({ usertoken }: { usertoken: string }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -29,7 +30,7 @@ const BvnTab = ({ usertoken }: { usertoken: string }) => {
     }
   };
   return (
-    <div>
+    <div className="relative">
       <form className="" onSubmit={verifyBvn}>
         <p className=" text-center w-[358px] mx-auto">
           To remove all limits on your account, we need to verify your BVN
@@ -54,6 +55,8 @@ const BvnTab = ({ usertoken }: { usertoken: string }) => {
           </button>
         </div>
       </form>
+
+      <ToastContainer />
     </div>
   );
 };

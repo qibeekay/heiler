@@ -7,7 +7,7 @@ import {
   MenuList,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { GetUserData } from "../../api/auth";
 import { GetAccountData } from "../../api/wallet";
@@ -37,8 +37,11 @@ const Header = ({ date, title }: Props) => {
     if (userToken) {
       const cleanedUserToken = userToken.replace(/"/g, "");
       setUsertoken(cleanedUserToken);
+    } else {
+      // If userToken doesn't exist, reroute to /onboarding
+      navigate("/onboarding");
     }
-  }, []);
+  }, [navigate]);
 
   const getUserData = async () => {
     const res = await GetUserData(usertoken);
@@ -57,13 +60,14 @@ const Header = ({ date, title }: Props) => {
     if (usertype === "User") {
       navigate("/patients/login");
       toast.success("Logged Out!");
-    } else {
+    } else if (usertype === "Doctor") {
       navigate("/doctors/login");
       toast.success("Logged Out!");
     }
   };
   const handleLogout = () => {
     localStorage.removeItem("dets");
+    localStorage.removeItem("user");
     handleLogoutPage();
   };
 
