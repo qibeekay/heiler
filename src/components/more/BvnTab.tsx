@@ -32,10 +32,10 @@ const BvnTab = ({ usertoken }: { usertoken: string }) => {
   return (
     <div className="relative">
       <form className="" onSubmit={verifyBvn}>
-        <p className=" text-center w-[358px] mx-auto">
+        <p className=" text-center max-w-[358px] mx-auto">
           To remove all limits on your account, we need to verify your BVN
         </p>
-        <div className="w-full flex flex-col items-center justify-center">
+        <div className="w-full flex flex-col items-center justify-center mt-4">
           <input
             type="text"
             name="bvn"

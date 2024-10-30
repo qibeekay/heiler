@@ -69,7 +69,7 @@ const FdDoctorBySpecialtyMain = () => {
 
           {/* search */}
           <div>
-            <div className=" shadow-lg bg-white flex gap-2 p-4 w-full sm:w-[30rem] rounded-md">
+            <div className=" shadow-lg bg-white flex gap-2 p-4 w-full md:w-[30rem] rounded-md">
               {/* icons */}
               <button>
                 <RiSearch2Line />

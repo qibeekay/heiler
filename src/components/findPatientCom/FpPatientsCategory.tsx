@@ -88,7 +88,7 @@ const FpPatientsCategory = () => {
 
             {/* search */}
             <div>
-              <div className=" shadow-lg bg-white flex gap-2 p-4 w-full sm:w-[30rem] rounded-md">
+              <div className=" shadow-lg bg-white flex flex-col gap-2 p-4 w-full md:w-[30rem] rounded-md">
                 {/* icons */}
                 <button>
                   <RiSearch2Line />
@@ -116,7 +116,7 @@ const FpPatientsCategory = () => {
                 <p>No Patients Avalaible</p>
               </div>
             ) : (
-              <div className="w-full grid grid-cols-2 gap-4 mt-[5rem]">
+              <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 mt-[5rem]">
                 {chats?.map((patient, index) => (
                   <div
                     key={index}

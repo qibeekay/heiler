@@ -78,6 +78,20 @@ const UsersList = () => {
     });
   };
 
+  // Truncate message with dynamic maxLength based on screen size
+  const truncateMessage = (message: string, maxLength: number) => {
+    if (message.length > maxLength) {
+      return message.slice(0, maxLength) + "...";
+    }
+    return message;
+  };
+
+  // Define the dynamic maxLength based on screen size
+  const getTruncateLength = () => {
+    if (window.innerWidth <= 350) return 30; // Smaller length for smaller screens
+    return 50; // Default length for larger screens
+  };
+
   return (
     <div
       className={`${
@@ -149,7 +163,7 @@ const UsersList = () => {
                       </p>
 
                       {chat?.recipientData.specialty_name && (
-                        <p className="text-[8px] text-white sm:text-sm bg-[#4485FD] px-1 rounded-2xl">
+                        <p className="text-[8px] hidden xs:block text-white sm:text-sm bg-[#4485FD] px-1 rounded-2xl">
                           {chat?.recipientData?.specialty_name || ""}
                         </p>
                       )}
@@ -161,7 +175,10 @@ const UsersList = () => {
                   {/* label/count */}
                   <div className="flex w-full justify-between gap-4 md:mt-1 items-center">
                     <p className="text-xs sm:text-sm md:text-base text-[#707991]">
-                      {emoji.emojify(chat?.lastMessage?.message)}
+                      {truncateMessage(
+                        emoji.emojify(chat?.lastMessage?.message),
+                        getTruncateLength()
+                      )}
                     </p>
                     <div>
                       <div className="grid items-center justify-center bg-greens w-2 lg:w-2 aspect-square rounded-full">

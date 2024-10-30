@@ -21,13 +21,13 @@ const FdDoctorBySpecialtyCat = ({ response }: Props) => {
 
   return (
     <div className="font-inter text-dark w-full pt-8 px-4 sm:px-8 xl:px-[5rem]">
-      <div className="w-full grid grid-cols-2 gap-4">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4">
         {response?.map((doctor, index) => (
           <div
             key={index}
             className="border shadow rounded-md py-6 px-8 bg-white w-full"
           >
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               {/* profile */}
               <div className="">
                 <div className="w-[106px] h-[106px] rounded-full overflow-hidden bg-[#fafafa]">
@@ -41,15 +41,17 @@ const FdDoctorBySpecialtyCat = ({ response }: Props) => {
 
               {/* text */}
               <div className="w-full flex flex-col gap-y-3">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-[21px] font-bold text-[#0D1B34]">
+                <div className="flex flex-col md:flex-row md:items-center justify-between">
+                  <h1 className="text-sm md:text-[21px] font-bold text-[#0D1B34]">
                     Dr. {doctor.firstName} {doctor.lastName}
                   </h1>
                   <p className="text-greens font-semibold text-base">
                     Specialist
                   </p>
                 </div>
-                <p className="text-[#A3B1AA]">MBBS, MD, FMCS(Dentistry)</p>
+                <p className=" text-sm md:text-base text-[#A3B1AA] ">
+                  MBBS, MD, FMCS(Dentistry)
+                </p>
               </div>
             </div>
             <button

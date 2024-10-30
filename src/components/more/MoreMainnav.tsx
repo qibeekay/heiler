@@ -169,7 +169,7 @@ const MoreMainnav = () => {
       <Header title="Patients" />
       <div className="font-inter text-dark w-full pt-8 pb-[8rem] lg:pb-20 py-4 px-4 sm:px-8 xl:px-[5rem]">
         <div className=" w-full mt-[7rem]">
-          <div className="flex gap-10">
+          <div className="flex flex-col md:flex-row gap-10">
             <div className="w-full border shadow h-fit rounded-lg p-[24px]">
               {/* Identification Section */}
               <div className="w-full flex flex-col gap-6">
