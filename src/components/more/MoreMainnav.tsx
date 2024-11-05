@@ -409,6 +409,7 @@ const MoreMainnav = () => {
                           <input
                             className="p-4 rounded-lg bg-bgGreen text-[#858585] placeholder:text-[#858585] border border-[#C2C8D0]/60 text-lg w-full outline-[#C2C8D0]"
                             type="text"
+                            required
                             placeholder="Enter your verifcation code"
                             name="otp"
                             value={formData.otp}

@@ -18,7 +18,7 @@ export const GetAccountData = async (usertoken: string) => {
 
     console.log(response.data.data);
     if (response.data.success === false) {
-      toast.error(response.data.message);
+      console.error(response.data.message);
       // return false; // Verification failed
       return [];
     } else {
@@ -46,7 +46,7 @@ export const GetBalance = async (usertoken: string) => {
 
     console.log(response.data.data);
     if (response.data.success === false) {
-      toast.error(response.data.message);
+      console.error(response.data.message);
       // return false; // Verification failed
       return [];
     } else {
@@ -104,7 +104,7 @@ export const Subscribe = async (payload: {
       toast.error(response.data.message);
       return false; // Verification failed
     } else {
-      toast.success("Please Check mail and verify otp");
+      toast.success(response.data.message);
       return true; // Verification succeeded
     }
   } catch (error: any) {
