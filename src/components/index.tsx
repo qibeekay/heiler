@@ -56,6 +56,7 @@ import Wallet from "../pages/wallet";
 import WalletMainnav from "./wallets/WalletMainnav";
 import WalletPage from "./wallets/WalletPage";
 import TransactionHistory from "./externalComponents/TransactionHistory";
+import AmbulanceModal from "./dashboardCom/AmbulanceModal";
 
 export {
   Plogin,
@@ -116,4 +117,5 @@ export {
   WalletMainnav,
   WalletPage,
   TransactionHistory,
+  AmbulanceModal,
 };

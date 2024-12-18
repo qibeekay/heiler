@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useConverstion } from "../useConversation";
+import { GetChatNotification } from "../../api/notification";
 
 const SideNav = () => {
   const location = useLocation();
   const params = useParams();
   const [usertype, setUsertype] = useState<string | "">("");
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [usertoken, setUsertoken] = useState("");
+  const [unRead, setUnread] = useState(0);
 
   useEffect(() => {
     // Fetch mail from localStorage when the component mounts
@@ -15,9 +18,45 @@ const SideNav = () => {
       const cleanedUserType = userType.replace(/"/g, "");
       setUsertype(cleanedUserType);
     }
+
+    const userToken = localStorage.getItem("user")?.trim();
+    if (userToken) {
+      const cleanedUserToken = userToken.replace(/"/g, "");
+      setUsertoken(cleanedUserToken);
+    }
   }, []);
 
   const { isActive } = useConverstion();
+
+  const getNotifications = async () => {
+    try {
+      const res = await GetChatNotification(usertoken);
+      setUnread(res);
+    } catch (error) {
+      console.error("Error fetching new chats notifications:", error);
+    }
+  };
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (usertoken) {
+      // Fetch notifications immediately
+      getNotifications();
+
+      // Set up polling every 5 seconds
+      intervalId = setInterval(() => {
+        getNotifications();
+      }, 5000);
+    }
+
+    return () => {
+      // Clear interval on component unmount or when usertoken changes
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [usertoken]);
 
   // navigation links
   const links = [
@@ -111,9 +150,8 @@ const SideNav = () => {
                     onMouseEnter={() => setHoveredLink(link.to)}
                     onMouseLeave={() => setHoveredLink(null)}
                   >
-                    <div className="">
+                    <div className="relative">
                       <img
-                        className=""
                         src={
                           location.pathname === link.to ||
                           (link.to === "/chats" &&
@@ -128,6 +166,12 @@ const SideNav = () => {
                         }
                         alt=""
                       />
+                      {/* Conditionally render the badge for unread messages */}
+                      {link.to === "/chats" && unRead > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-greens text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                          {unRead}
+                        </span>
+                      )}
                     </div>
                     {link.label}
                   </Link>
@@ -162,9 +206,8 @@ const SideNav = () => {
                       onMouseEnter={() => setHoveredLink(link.to)}
                       onMouseLeave={() => setHoveredLink(null)}
                     >
-                      <div className="">
+                      <div className="relative">
                         <img
-                          className=""
                           src={
                             location.pathname === link.to ||
                             (link.to === "/chats" &&
@@ -179,6 +222,12 @@ const SideNav = () => {
                           }
                           alt=""
                         />
+                        {/* Conditionally render the badge for unread messages */}
+                        {link.to === "/chats" && unRead > 0 && (
+                          <span className="absolute -top-2 -right-2 bg-greens text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                            {unRead}
+                          </span>
+                        )}
                       </div>
                       <div className="hidden xs:block">
                         <span

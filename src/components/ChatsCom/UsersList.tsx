@@ -6,6 +6,7 @@ import { GetUserChat } from "../../api/chat";
 import FormatTime from "../../utils/formatTime";
 import Loader from "../loader/Loader";
 import * as emoji from "node-emoji";
+import { GetChatNotification } from "../../api/notification";
 
 interface RecipientData {
   mail: string;
@@ -37,7 +38,7 @@ interface ChatResponse {
 const UsersList = () => {
   const [usertoken, setUsertoken] = useState("");
   const [chats, setChats] = useState<ChatResponse[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
   const { isActive } = useConverstion();
@@ -53,13 +54,46 @@ const UsersList = () => {
   }, []);
 
   const getUserChats = async () => {
-    setIsLoading(true);
-    try {
-      const res = await GetUserChat(usertoken);
-      setChats(res);
-    } catch {
-    } finally {
-      setIsLoading(false);
+    // Retrieve chat data from localStorage
+    const storedChats = JSON.parse(localStorage.getItem("chats") || "[]");
+
+    if (storedChats.length > 0) {
+      setChats(storedChats); // Set chats from localStorage if they exist
+      setIsLoading(false); // Stop loader as we have initial data
+
+      try {
+        // Fetch new data from the API to check for new chat objects
+        const res = await GetUserChat(usertoken);
+
+        // Identify any new chats not already in local storage
+        const newChats = res.filter(
+          (newChat: ChatResponse) =>
+            !storedChats.some(
+              (storedChat: ChatResponse) =>
+                storedChat.recipient === newChat.recipient
+            )
+        );
+
+        if (newChats.length > 0) {
+          const updatedChats = [...storedChats, ...newChats];
+          setChats(updatedChats);
+          localStorage.setItem("chats", JSON.stringify(updatedChats)); // Update localStorage with new data
+        }
+      } catch (error) {
+        console.error("Error fetching new chats:", error);
+      }
+    } else {
+      // If no data in localStorage, load from API and show loader
+      setIsLoading(true);
+      try {
+        const res = await GetUserChat(usertoken);
+        setChats(res);
+        localStorage.setItem("chats", JSON.stringify(res));
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      } finally {
+        setIsLoading(false); // Stop loader once done
+      }
     }
   };
 
@@ -68,9 +102,6 @@ const UsersList = () => {
       getUserChats();
     }
   }, [usertoken]);
-
-  // console.log(chats);
-  // console.log(usertoken);
 
   const singleMessege = (chat: ChatResponse) => {
     navigate(`/chats/${chat.recipientData.token}`, {

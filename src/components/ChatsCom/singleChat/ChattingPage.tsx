@@ -43,12 +43,14 @@ interface LastMessage {
 }
 
 interface ChatResponse {
+  [x: string]: any;
   recipient: string;
   recipientData: RecipientData;
   lastMessage: LastMessage;
 }
 
 interface ReadResponse {
+  [x: string]: any;
   id: number;
   message: string;
   recipient: string;
@@ -77,12 +79,39 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
   const [chats, setChats] = useState<ReadResponse[]>([]);
   const [usertoken, setUsertoken] = useState("");
   const [bvnStatus, setBvnStatus] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | "">("");
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [usertype, setUsertype] = useState<string | "">("");
 
   const navigate = useNavigate();
+
+  // stored chats
+  useEffect(() => {
+    // Load chats from local storage when the component mounts
+    const storedChats = JSON.parse(localStorage.getItem("chats") || "{}");
+    console.log("store", storedChats);
+    // Check if chat and recipientData are defined before accessing token
+    if (chat && chat.recipientData) {
+      // Find the current chat using the recipient token
+      const currentChat = storedChats.find(
+        (storedChat: { recipientData: { token: string } }) =>
+          storedChat.recipientData.token === chat.recipientData.token
+      );
+      console.log("current", currentChat);
+      if (currentChat) {
+        setChats(currentChat.read); // Load the messages from the chat
+      } else {
+        setChats([]); // No messages found
+      }
+    } else {
+      setChats([]); // Reset chats if chat or recipientData is undefined
+    }
+  }, [chat]);
+
+  console.log("chats", chats);
 
   const [formData, setFormData] = useState({
     sender: "",
@@ -138,20 +167,100 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
     }
   }, []);
 
+  const endRef = useRef<HTMLDivElement>(null);
+
+  // Function to scroll to the latest message
+  const scrollToBottom = () => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Auto-scroll whenever chats are updated
+  useEffect(() => {
+    scrollToBottom();
+  }, [chats]);
+
+  // Modify readUserChats to keep messages and add loading icon at the bottom
   const readUserChats = async () => {
-    setIsLoading(true);
+    if (isInitialLoading) {
+      setIsInitialLoading(true);
+    } else {
+      setIsRefreshing(true);
+    }
+
     try {
-      const res = await ReadUserChat(usertoken, `${chat?.recipientData.token}`);
-      setChats(res);
-    } catch {
+      if (!chat || !chat.recipientData) {
+        console.error("Chat or recipient data is not available.");
+        return;
+      }
+
+      const res = await ReadUserChat(usertoken, chat.recipientData.token);
+
+      setChats((prevChats) => {
+        const storedChats: ChatResponse[] = JSON.parse(
+          localStorage.getItem("chats") || "[]"
+        );
+
+        const currentChatIndex = storedChats.findIndex(
+          (storedChat) =>
+            storedChat.recipientData.token.trim() ===
+            chat.recipientData.token.trim()
+        );
+
+        let newMessages = res;
+        if (currentChatIndex !== -1) {
+          const storedReadMessages = storedChats[currentChatIndex].read || [];
+
+          // Filter out existing messages based on the token
+          newMessages = res.filter(
+            (msg: { token: string }) =>
+              !storedReadMessages.some(
+                (chat: { token: string }) => chat.token === msg.token
+              )
+          );
+
+          // Append new messages to the stored read array
+          const updatedChat = {
+            ...storedChats[currentChatIndex],
+            read: [...storedReadMessages, ...newMessages],
+            lastMessage:
+              newMessages[newMessages.length - 1] ||
+              storedChats[currentChatIndex].lastMessage,
+          };
+
+          // Update local storage and state
+          storedChats[currentChatIndex] = updatedChat;
+        } else {
+          // If no chat found, create a new one
+          const newChat: ChatResponse = {
+            recipient: chat.recipientData.token,
+            recipientData: chat.recipientData,
+            read: newMessages,
+            lastMessage: newMessages[newMessages.length - 1],
+          };
+          storedChats.push(newChat);
+        }
+
+        localStorage.setItem("chats", JSON.stringify(storedChats));
+
+        // Update the UI with both previous chats and new messages
+        return [...prevChats, ...newMessages];
+      });
+    } catch (error) {
+      console.error("Error reading user chats:", error);
     } finally {
-      setIsLoading(false);
+      setIsRefreshing(false);
+      setIsInitialLoading(false);
     }
   };
 
   useEffect(() => {
     if (usertoken && chat?.recipientData?.token) {
-      readUserChats();
+      const intervalId = setInterval(() => {
+        readUserChats();
+      }, 5000);
+
+      // Cleanup interval on component unmount
+      return () => clearInterval(intervalId);
     }
   }, [usertoken, chat?.recipientData?.token]);
 
@@ -161,27 +270,84 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
 
     // Check if the message is empty
     if (!formData.message.trim() && !formData.image) {
-      // Do not send the message if it's empty or contains only spaces
-      return;
+      return; // Do not send if empty
     }
 
     setIsLoading(true);
+
     const payload = {
       ...formData,
       sender: usertoken,
-      recipient: `${chat?.recipientData.token}`,
+      recipient: `${chat?.recipientData?.token}`, // Use optional chaining
     };
 
-    console.log(payload);
+    if (!chat?.recipientData) {
+      console.error("Recipient data is not available.");
+      setIsLoading(false);
+      return; // Early return if recipientData is not defined
+    }
+
     try {
       const res = await SendUserChat(payload);
-      setChats((prevChats) => [...prevChats, res]);
+
+      // Update local state
+      setChats((prevChats) => {
+        // Check if the message already exists to avoid duplicates
+        const exists = prevChats.some((chat) => chat.token === res.token);
+        if (!exists) {
+          return [...prevChats, res];
+        }
+        return prevChats; // Return unchanged if it exists
+      });
+
+      // Update local storage
+      const storedChats: ChatResponse[] = JSON.parse(
+        localStorage.getItem("chats") || "[]"
+      );
+
+      // Find the current chat using the recipient token
+      const currentChatIndex = storedChats.findIndex(
+        (storedChat) =>
+          storedChat.recipientData.token.trim() ===
+          chat.recipientData.token.trim()
+      );
+
+      if (currentChatIndex !== -1) {
+        // Remove duplicate messages based on the token
+        storedChats[currentChatIndex].read = storedChats[
+          currentChatIndex
+        ].read.filter((message: { token: any }) => message.token !== res.token);
+
+        // If chat exists, update it
+        const updatedChat = {
+          ...storedChats[currentChatIndex],
+          read: [...storedChats[currentChatIndex].read, res], // Append new message to read
+          lastMessage: res, // Update lastMessage to the latest sent message
+        };
+        storedChats[currentChatIndex] = updatedChat; // Update the stored chat
+      } else {
+        // If chat does not exist, create a new entry
+        const newChat: ChatResponse = {
+          recipient: chat.recipientData.token,
+          recipientData: chat.recipientData,
+          read: [res],
+          lastMessage: res, // Set lastMessage to the sent message
+        };
+        storedChats.push(newChat); // Add the new chat to the array
+      }
+
+      localStorage.setItem("chats", JSON.stringify(storedChats)); // Save back to local storage
+
+      // Clear form data
       setFormData((prevData) => ({ ...prevData, message: "", image: "" }));
-    } catch {
+    } catch (error) {
+      console.error("Error sending message:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  Math.floor(Date.now() / 1000);
 
   // handles the selection of emoji's
   const handleEmojiSelect = (emoji: any) => {
@@ -190,12 +356,6 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
       message: prevData.message + emoji.shortcodes,
     }));
   };
-
-  const endRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chats]);
 
   // it formats the date to display in Fri 02 september
   const formatDate = (day: string, month: string, year: string) => {
@@ -297,12 +457,18 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
           )}
         </div>
 
-        {isLoading ? (
+        {isInitialLoading ? (
           <div className="w-full grid items-center justify-center mt-10">
             <Loader />
           </div>
         ) : (
           <div className="h-[calc(80%-4rem)] text-black overflow-y-scroll flex flex-col p-4">
+            {/* Loading spinner for ongoing fetches without clearing messages */}
+            {isRefreshing && (
+              <div className="w-full absolute left-0 top-[7rem] flex items-center justify-center mt-2">
+                <p className=" text-gray-400/10">loading...</p>
+              </div>
+            )}
             {Object.entries(groupedChats).map(([date, messages]) => (
               <div key={date}>
                 {/* Display the date */}
@@ -349,10 +515,11 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
                 ))}
               </div>
             ))}
+            {/* {isLoading ? "Sending" : ""} */}
+
+            <div ref={endRef}></div>
           </div>
         )}
-
-        <div ref={endRef}></div>
 
         {/* Image Modal */}
         {modalImage && (
@@ -375,82 +542,88 @@ const ChattingPage = ({ chat, onCreateCaseNote }: Props) => {
 
         {/* input field */}
         <form className="w-full">
-          <div className="absolute bg-lemongreen py-2 px-2 sm:px-6 rounded-full flex items-center gap-2 w-[90%] xl:w-[35rem] bottom-10 left-[50%] -translate-x-[50%]">
-            <div className="bg-white w-full rounded-full p-4 flex items-center gap-4">
-              <div className="relative w-[3rem] grid items-center justify-center">
-                <button
-                  type="button"
-                  onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}
-                >
-                  <img src="/emoji.png" alt="Emoji Picker" />
-                </button>
-                {emojiPickerOpen && (
-                  <div className="absolute -top-[30rem] -left-[15rem]">
-                    <Picker data={data} onEmojiSelect={handleEmojiSelect} />
-                  </div>
-                )}
-              </div>
-              <div className="w-full">
-                <input
-                  type="text"
-                  name="message"
-                  value={emoji.emojify(formData.message)}
-                  onChange={handleChange}
-                  className="py-1.5 italic bg-transparent w-full outline-none"
-                  placeholder="Type message..."
-                />
-                {selectedImage && (
-                  <div className="relative w-fit">
-                    <div className="w-10 aspect-square rounded-md overflow-hidden mt-2">
-                      <img
-                        className="w-full h-full object-cover"
-                        src={selectedImage}
-                        alt="Camera"
-                      />
+          <div className=" absolute left-[50%] -translate-x-[50%] bottom-2 lg:bottom-10 w-[90%] xl:w-[35rem]">
+            <div className=" bg-lemongreen py-2 px-2 sm:px-6 rounded-full flex items-center gap-2">
+              <div className="bg-white w-full rounded-full p-4 flex items-center gap-4">
+                <div className="relative w-[3rem] grid items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}
+                  >
+                    <img src="/emoji.png" alt="Emoji Picker" />
+                  </button>
+                  {emojiPickerOpen && (
+                    <div className="absolute -top-[30rem] -left-[15rem]">
+                      <Picker data={data} onEmojiSelect={handleEmojiSelect} />
                     </div>
-                    <button
-                      className="absolute -top-2 -right-2 bg-red-500 z-10 rounded-full w-4 h-4 flex items-center justify-center"
-                      type="button"
-                      onClick={handleRemoveImage}
-                    >
-                      <HiMiniTrash color="white" size={10} />
+                  )}
+                </div>
+                <div className="w-full">
+                  <input
+                    type="text"
+                    name="message"
+                    value={emoji.emojify(formData.message)}
+                    onChange={handleChange}
+                    className="py-1.5 italic bg-transparent w-full outline-none"
+                    placeholder="Type message..."
+                  />
+                  {selectedImage && (
+                    <div className="relative w-fit">
+                      <div className="w-10 aspect-square rounded-md overflow-hidden mt-2">
+                        <img
+                          className="w-full h-full object-cover"
+                          src={selectedImage}
+                          alt="Camera"
+                        />
+                      </div>
+                      <button
+                        className="absolute -top-2 -right-2 bg-red-500 z-10 rounded-full w-4 h-4 flex items-center justify-center"
+                        type="button"
+                        onClick={handleRemoveImage}
+                      >
+                        <HiMiniTrash color="white" size={10} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-4 items-center justify-center w-[5rem]">
+                  <div className="relative">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        name="image"
+                        onChange={handleImageChange}
+                        id="image-input"
+                        hidden
+                      />
+                      <label htmlFor="image-input" className="cursor-pointer">
+                        <img src="/attach.png" alt="Attach" />
+                      </label>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <button onClick={sendUserChat} disabled={!bvnStatus}>
+                      <IoSendSharp />
                     </button>
                   </div>
-                )}
-              </div>
-              <div className="flex gap-4 items-center justify-center w-[5rem]">
-                <div className="relative">
-                  <div className="relative">
-                    <input
-                      type="file"
-                      name="image"
-                      onChange={handleImageChange}
-                      id="image-input"
-                      hidden
-                    />
-                    <label htmlFor="image-input" className="cursor-pointer">
-                      <img src="/attach.png" alt="Attach" />
-                    </label>
-                  </div>
-                </div>
-                <div className="relative">
-                  <button onClick={sendUserChat} disabled={!bvnStatus}>
-                    <IoSendSharp />
-                  </button>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <button className="bg-greens w-[2.5rem] sm:w-[4rem] aspect-square grid items-center justify-center rounded-full overflow-hidden">
-                <img className="w-[0.8rem]" src="/vn.png" alt="Voice Note" />
-              </button>
+              <div>
+                <button className="bg-greens w-[2.5rem] sm:w-[4rem] aspect-square grid items-center justify-center rounded-full overflow-hidden">
+                  <img className="w-[0.8rem]" src="/vn.png" alt="Voice Note" />
+                </button>
+              </div>
             </div>
+            <span
+              className={`text-red-500 text-xs text-center ${
+                bvnStatus ? "hidden" : "block"
+              }`}
+            >
+              Please Subscribe to be able to chat
+            </span>
           </div>
         </form>
-        <span className={`text-red-500 ${bvnStatus ? "hidden" : "block"}`}>
-          Please Subscribe to be able to chat
-        </span>
       </div>
     </div>
   );

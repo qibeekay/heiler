@@ -42,5 +42,5 @@ module.exports = withMT({
       inter: ["Inter", "sans-serif"],
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 });

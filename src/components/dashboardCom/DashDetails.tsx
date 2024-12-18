@@ -1,9 +1,40 @@
 import { useEffect, useState } from "react";
 import { IoEyeOffSharp } from "react-icons/io5";
-import { Link } from "react-router-dom";
-import { TransactionHistory, WalletCard } from "../../components";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  AmbulanceModal,
+  TransactionHistory,
+  WalletCard,
+} from "../../components";
 
 const DashDetails = () => {
+  const [usertype, setUsertype] = useState<string | "">("");
+  const navigate = useNavigate();
+  const [modal, setModal] = useState(false);
+
+  useEffect(() => {
+    // Fetch mail from localStorage when the component mounts
+    const userType = localStorage.getItem("type")?.trim();
+    if (userType) {
+      const cleanedUserType = userType.replace(/"/g, "");
+      setUsertype(cleanedUserType);
+    }
+  }, []);
+
+  // Function to open the modal
+  const openModal = () => {
+    setModal(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setModal(false);
+  };
+
+  const handleClick = () => {
+    navigate(usertype === "User" ? "/find-doctor" : "/find-patient");
+  };
+
   return (
     <div className="w-full text-dark font-inter pt-[9.5rem] pb-[8rem] md:pb-20 py-4 px-4 sm:px-8 xl:px-[5rem]">
       <div className="flex flex-col llg:flex-row gap-6 xl:gap-10">
@@ -34,71 +65,28 @@ const DashDetails = () => {
           {/* buttoms */}
           <div className="mt-16">
             {/* doctor */}
-            <button className=" bg-greens text-white font-semibold w-full flex items-center gap-4 rounded-lg py-5 justify-center border border-greens">
+            <button
+              className=" bg-greens text-white font-semibold w-full flex items-center gap-4 rounded-lg py-5 justify-center border border-greens"
+              onClick={handleClick}
+            >
               {/* img */}
               <div className=" w-[3rem] rounded-full grid items-center justify-center aspect-square bg-white">
                 <img className=" " src="/profile-add.png" alt="" />
               </div>
-              Doctor
+              {usertype === "User" ? "Doctor" : "Patient"}
             </button>
 
             {/* ambulance */}
-            <button className=" bg-white text-greens font-semibold w-full flex items-center gap-4 rounded-lg py-5 justify-center mt-6 border border-greens">
+            <button
+              className=" bg-white text-greens font-semibold w-full flex items-center gap-4 rounded-lg py-5 justify-center mt-6 border border-greens"
+              onClick={openModal}
+            >
               {/* img */}
               <div className=" w-[3rem] rounded-full grid items-center justify-center aspect-square bg-lemongreen">
                 <img className=" " src="/hospital.png" alt="" />
               </div>
-              Doctor
+              Ambulance
             </button>
-          </div>
-
-          {/* notification card */}
-          <div className="mt-16">
-            <div className="bg-white shadow-lg rounded-lg">
-              {/* head */}
-              <div className="flex items-center justify-between px-4 sm:px-10 py-7">
-                <p className="font-bold sm:text-xl xl:text-2xl">
-                  Notifications
-                </p>
-                <Link to={""} className="text-greens font-medium ">
-                  See all
-                </Link>
-              </div>
-
-              {/* notiii */}
-              <div className=" border-t px-4 sm:px-10 py-7">
-                {/* info */}
-                <div className="flex items-center justify-between">
-                  {/* text */}
-                  <div>
-                    {/* text 1 */}
-                    <div className="flex gap-4">
-                      {/* icon */}
-                      <div>
-                        <img src="/success.png" alt="" />
-                      </div>
-                      {/* text */}
-                      <p className="grid xl:text-lg font-bold">
-                        Card successfully saved{" "}
-                        <span className="font-normal text-textgray mt-1 text-xs sm:text-base">
-                          VISA 1234 has been added to your account
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* close */}
-                  <button className="">
-                    <img src="/close.png" alt="" />
-                  </button>
-                </div>
-
-                {/* info */}
-                <p className="text-center text-[#EE9621] font-semibold mt-14">
-                  View Cards
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -108,7 +96,10 @@ const DashDetails = () => {
           <WalletCard />
 
           {/* transaction history */}
-          <TransactionHistory />
+          {/* <TransactionHistory /> */}
+
+          {/* modal */}
+          {modal && <AmbulanceModal close={closeModal} />}
         </div>
       </div>
     </div>

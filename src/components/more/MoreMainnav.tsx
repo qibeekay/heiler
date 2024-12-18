@@ -71,6 +71,7 @@ const MoreMainnav = () => {
     const res = await GetBalance(usertoken);
     setBalance(res?.balance_th);
   };
+
   const getAccountData = async () => {
     const res = await GetAccountData(usertoken);
     setBankName(res[0].bank_name);
@@ -217,7 +218,7 @@ const MoreMainnav = () => {
                     </button>
 
                     {/* id documents */}
-                    <button
+                    {/* <button
                       className={`py-2 flex w-full items-center justify-between font-medium px-4 ${
                         activeTab === "2" ? "text-greens" : "text-[#192720]"
                       }`}
@@ -238,10 +239,10 @@ const MoreMainnav = () => {
                           alt=""
                         />
                       </div>
-                    </button>
+                    </button> */}
 
                     {/* home address */}
-                    <button
+                    {/* <button
                       className={`py-2 flex w-full items-center justify-between font-medium px-4 ${
                         activeTab === "3" ? "text-greens" : "text-[#192720]"
                       }`}
@@ -262,7 +263,7 @@ const MoreMainnav = () => {
                           alt=""
                         />
                       </div>
-                    </button>
+                    </button> */}
                   </div>
                 )}
 
